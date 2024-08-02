@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data</title>
+    <link rel="stylesheet" href="../src/output.css">
 </head>
 <body>
-    <h2>hi</h2>
+    <h2 class="bg-red-500">hi</h2>
 </body>
 </html>
