@@ -3,13 +3,13 @@ require __DIR__ . '/../connection.php';
 
 // Queries to populate selection options
 $queries = [
-    "facility" => "SELECT Facility_ID FROM lot",
-    "work_center" => "SELECT Work_Center FROM lot",
-    "device_name" => "SELECT Part_Type FROM lot",
-    "test_program" => "SELECT Program_Name FROM lot",
-    "lot" => "SELECT Lot_ID FROM lot",
-    "wafer" => "SELECT Wafer_ID, Wafer_Sequence FROM wafer ORDER BY Wafer_ID ASC",
-    "parameter" => "SELECT Column_Name FROM TEST_PARAM_MAP ORDER BY Column_Name DESC"
+    "facility" => "SELECT DISTINCT Facility_ID FROM lot",
+    "work_center" => "SELECT DISTINCT Work_Center FROM lot",
+    "device_name" => "SELECT DISTINCT Part_Type FROM lot",
+    "test_program" => "SELECT DISTINCT Program_Name FROM lot",
+    "lot" => "SELECT DISTINCT Lot_ID FROM lot",
+    "wafer" => "SELECT DISTINCT Wafer_ID, Wafer_Sequence FROM wafer ORDER BY Wafer_ID ASC",
+    "parameter" => "SELECT DISTINCT Column_Name FROM TEST_PARAM_MAP"
 ];
 
 $options = [];
@@ -20,6 +20,14 @@ foreach ($queries as $key => $query) {
     }
     sqlsrv_free_stmt($stmt);
 }
+
+// Custom natural sorting function
+function naturalSort($a, $b) {
+    return strnatcmp($a['Column_Name'], $b['Column_Name']);
+}
+
+// Sort parameters using natural sorting
+usort($options['parameter'], 'naturalSort');
 ?>
 
 <!DOCTYPE html>
@@ -58,9 +66,11 @@ foreach ($queries as $key => $query) {
                 echo "<div>
                         <label for='$key' class='block text-sm font-medium text-gray-700'>$label</label>
                         <select id='$key' name='{$key}[]' class='mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md' multiple>";
-                foreach ($options[$key] as $option) {
-                    $value = array_values($option)[0];
-                    echo "<option value='$value'>$value</option>";
+                if (isset($options[$key])) {
+                    foreach ($options[$key] as $option) {
+                        $value = array_values($option)[0];
+                        echo "<option value='$value'>$value</option>";
+                    }
                 }
                 echo "  </select>
                       </div>";
