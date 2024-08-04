@@ -1,17 +1,23 @@
 <?php
 require __DIR__ . '/../connection.php';
 
-if (isset($_GET['query'])) {
-    $query = $_GET['query'];
-    $stmt = sqlsrv_query($conn, $query);
+$query = $_GET['query'];
+$result = sqlsrv_query($conn, $query);
 
-    $options = [];
-    if ($stmt) {
-        while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-            $options[] = array_values($row)[0];
-        }
+$options = [];
+
+if ($query === "SELECT Wafer_ID, Wafer_Sequence FROM wafer ORDER BY Wafer_ID ASC") {
+    while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+        $options[] = $row['Wafer_ID'] . '-' . $row['Wafer_Sequence'];
     }
-
-    echo json_encode($options);
+} else {
+    while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+        $options[] = reset($row);
+    }
 }
+
+echo json_encode($options);
+
+sqlsrv_free_stmt($result);
+sqlsrv_close($conn);
 ?>
