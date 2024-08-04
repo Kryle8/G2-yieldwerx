@@ -52,7 +52,7 @@ usort($options['parameter'], 'naturalSort');
 <?php include('navbar.php'); ?>
 <div class="container mx-auto p-6">
     <form action="dashboard.php" method="GET">
-        <div class="grid grid-cols-3 gap-4 mb-4">
+        <div class="grid grid-cols-2 gap-4 mb-4">
             <?php
             $fields = [
                 "facility" => "Facility",
