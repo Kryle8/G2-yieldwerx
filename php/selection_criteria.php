@@ -8,7 +8,7 @@ $queries = [
     "device_name" => "SELECT DISTINCT Part_Type FROM lot",
     "test_program" => "SELECT DISTINCT Program_Name FROM lot",
     "lot" => "SELECT DISTINCT Lot_ID FROM lot",
-    "wafer" => "SELECT DISTINCT Wafer_ID, Wafer_Sequence FROM wafer ORDER BY Wafer_ID ASC",
+    "wafer" => "SELECT DISTINCT Wafer_ID FROM wafer ORDER BY Wafer_ID ASC",
     "parameter" => "SELECT DISTINCT Column_Name FROM TEST_PARAM_MAP"
 ];
 

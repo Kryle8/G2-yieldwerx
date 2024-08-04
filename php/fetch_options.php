@@ -6,7 +6,7 @@ $result = sqlsrv_query($conn, $query);
 
 $options = [];
 
-if ($query === "SELECT Wafer_ID, Wafer_Sequence FROM wafer ORDER BY Wafer_ID ASC") {
+if ($query === "SELECT DISTINCT Wafer_ID, Wafer_Sequence FROM wafer ORDER BY Wafer_ID ASC") {
     while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
         $options[] = $row['Wafer_ID'] . '-' . $row['Wafer_Sequence'];
     }
