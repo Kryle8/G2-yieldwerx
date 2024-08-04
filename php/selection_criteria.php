@@ -42,11 +42,13 @@ usort($options['parameter'], 'naturalSort');
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
 </head>
 <style>
+    body {
+        background-color: #F5EDED;
+    }
     select:not([size]) {
         background: white !important;
     }
 </style>
-<body class="bg-gray-100 text-black">
 <?php include('navbar.php'); ?>
 <div class="container mx-auto p-6">
     <form action="dashboard.php" method="GET">
