@@ -80,7 +80,7 @@ usort($options['parameter'], 'naturalSort');
             ?>
         </div>
         <div class="text-center">
-            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Execute</button>
+            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">SELECT</button>
         </div>
     </form>
 </div>

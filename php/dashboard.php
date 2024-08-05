@@ -105,7 +105,7 @@ $query_string = preg_replace('/(&?page=null)|(&?page=\d+)/', '', $query_string);
         <div class="table-container">
             <table class="w-full border-collapse table-auto p-4">
                 <thead>
-                    <tr class="bg-gray-200">
+                    <tr class="bg-blue-200">
                         <?php
                         $columns = [
                             'Facility_ID', 'Work_Center', 'Part_Type', 'Program_Name', 'Test_Temprature', 'Lot_ID',
@@ -140,7 +140,7 @@ $query_string = preg_replace('/(&?page=null)|(&?page=\d+)/', '', $query_string);
         <!-- Pagination -->
         <div class="mt-4 flex justify-center space-x-1">
             <?php if ($current_page > 1): ?>
-                <a href="?<?php echo $query_string . '&page=' . ($current_page - 1); ?>" class="px-4 py-2 bg-blue-500 text-white rounded-l">Previous</a>
+                <a href="?<?php echo $query_string . '&page=' . ($current_page - 1); ?>" class="px-4 py-2 bg-gray-500 text-white rounded-l">Previous</a>
             <?php endif; ?>
 
             <?php
@@ -165,7 +165,7 @@ $query_string = preg_replace('/(&?page=null)|(&?page=\d+)/', '', $query_string);
             ?>
 
             <?php if ($current_page < $total_pages): ?>
-                <a href="?<?php echo $query_string . '&page=' . ($current_page + 1); ?>" class="px-4 py-2 bg-blue-500 text-white rounded-r">Next</a>
+                <a href="?<?php echo $query_string . '&page=' . ($current_page + 1); ?>" class="px-4 py-2 bg-gray-500 text-white rounded-r">Next</a>
             <?php endif; ?>
         </div>
 
