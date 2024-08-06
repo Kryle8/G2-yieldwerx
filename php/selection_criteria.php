@@ -64,12 +64,14 @@ sqlsrv_free_stmt($stmt);
                 </select>
             </div>
 
+            <!-- Parameter selection -->
             <div class="col-span-3">
                 <label for="parameter" class="block text-sm font-medium text-gray-700">Parameter</label>
                 <select id="parameter" name="parameter[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
                     <!-- Options will be populated based on wafer selection -->
                 </select>
             </div>
+
         </div>
         <div class="text-right w-full flex justify-end gap-4">
             <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Select</button>
@@ -77,7 +79,7 @@ sqlsrv_free_stmt($stmt);
         </div>
     </form>
 </div>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Include jQuery -->
 <script>
 $(document).ready(function() {
     // Function to fetch options based on previous selection
@@ -92,15 +94,24 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 let options = '';
+                
                 if (queryType === 'parameter') {
+                    // Sort the response based on numeric value after 'T'
+                    response.sort(function(a, b) {
+                        let numA = parseInt(a.value.slice(1)); // Extract number from 'Txxx'
+                        let numB = parseInt(b.value.slice(1));
+                        return numA - numB;
+                    });
+
                     $.each(response, function(index, item) {
-                        options += `<option value="${item.value}">${item.display}</option>`;
+                        options += `<option value="${item.value}">${item.value}: ${item.display}</option>`;
                     });
                 } else {
                     $.each(response, function(index, value) {
                         options += `<option value="${value}">${value}</option>`;
                     });
                 }
+
                 targetElement.html(options);
             }
         });
