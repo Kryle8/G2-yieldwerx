@@ -23,7 +23,7 @@
          margin-top: 60px; /* Adjust this value if necessary to avoid overlapping with the navbar */
       }
       .bg-primary {
-         background-color: #E2DAD6;
+         background-color: #fff;
       }
       .bg-secondary {
          background-color: #7FA1C3;
