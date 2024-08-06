@@ -18,7 +18,7 @@
          height: 100%;
       }
       .bg-primary {
-         background-color: #E2DAD6;
+         background-color: #fff;
       }
       .bg-secondary {
          background-color: #7FA1C3;
