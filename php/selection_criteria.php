@@ -1,88 +1,154 @@
 <?php
 require __DIR__ . '/../connection.php';
 
-// Queries to populate selection options
-$queries = [
-    "facility" => "SELECT DISTINCT Facility_ID FROM lot",
-    "work_center" => "SELECT DISTINCT Work_Center FROM lot",
-    "device_name" => "SELECT DISTINCT Part_Type FROM lot",
-    "test_program" => "SELECT DISTINCT Program_Name FROM lot",
-    "lot" => "SELECT DISTINCT Lot_ID FROM lot",
-    "wafer" => "SELECT DISTINCT Wafer_ID FROM wafer ORDER BY Wafer_ID ASC",
-    "parameter" => "SELECT DISTINCT Column_Name FROM TEST_PARAM_MAP"
-];
-
-$options = [];
-foreach ($queries as $key => $query) {
-    $stmt = sqlsrv_query($conn, $query);
-    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-        $options[$key][] = $row;
-    }
-    sqlsrv_free_stmt($stmt);
+// Query to populate the initial facility options
+$query = "SELECT Facility_ID FROM lot";
+$facilities = [];
+$stmt = sqlsrv_query($conn, $query);
+while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+    $facilities[] = $row['Facility_ID'];
 }
-
-// Custom natural sorting function
-function naturalSort($a, $b) {
-    return strnatcmp($a['Column_Name'], $b['Column_Name']);
-}
-
-// Sort parameters using natural sorting
-usort($options['parameter'], 'naturalSort');
+sqlsrv_free_stmt($stmt);
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Selection Criteria</title>
-    <link rel="stylesheet" href="../src/output.css">
-    <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
-</head>
 <style>
-    body {
-        background-color: #F5EDED;
-    }
     select:not([size]) {
         background: white !important;
     }
 </style>
-<?php include('navbar.php'); ?>
 <div class="container mx-auto p-6">
-    <form action="dashboard.php" method="GET">
-        <div class="grid grid-cols-2 gap-4 mb-4">
-            <?php
-            $fields = [
-                "facility" => "Facility",
-                "work_center" => "Work Center",
-                "device_name" => "Device Name",
-                "test_program" => "Test Program",
-                "lot" => "Lot",
-                "wafer" => "Wafer",
-                "parameter" => "Parameter"
-            ];
+    <h1 class="text-center text-2xl font-bold mb-4 w-full">Selection Criteria</h1>
+    <form action="dashboard.php" method="GET" id="criteriaForm">
+        <div class="grid grid-cols-3 gap-4 mb-4">
+            <div>
+                <label for="facility" class="block text-sm font-medium text-gray-700">Facility</label>
+                <select id="facility" name="facility[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                    <?php foreach ($facilities as $facility): ?>
+                        <option value="<?= $facility ?>"><?= $facility ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-            foreach ($fields as $key => $label) {
-                echo "<div>
-                        <label for='$key' class='block text-sm font-medium text-gray-700'>$label</label>
-                        <select id='$key' name='{$key}[]' class='mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md' multiple>";
-                if (isset($options[$key])) {
-                    foreach ($options[$key] as $option) {
-                        $value = array_values($option)[0];
-                        echo "<option value='$value'>$value</option>";
-                    }
-                }
-                echo "  </select>
-                      </div>";
-            }
-            ?>
+            <div>
+                <label for="work_center" class="block text-sm font-medium text-gray-700">Work Center</label>
+                <select id="work_center" name="work_center[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                    <!-- Options will be populated based on facility selection -->
+                </select>
+            </div>
+
+            <div>
+                <label for="device_name" class="block text-sm font-medium text-gray-700">Device Name</label>
+                <select id="device_name" name="device_name[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                    <!-- Options will be populated based on work center selection -->
+                </select>
+            </div>
+
+            <div>
+                <label for="test_program" class="block text-sm font-medium text-gray-700">Test Program</label>
+                <select id="test_program" name="test_program[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                    <!-- Options will be populated based on device name selection -->
+                </select>
+            </div>
+
+            <div>
+                <label for="lot" class="block text-sm font-medium text-gray-700">Lot</label>
+                <select id="lot" name="lot[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                    <!-- Options will be populated based on test program selection -->
+                </select>
+            </div>
+
+            <div>
+                <label for="wafer" class="block text-sm font-medium text-gray-700">Wafer</label>
+                <select id="wafer" name="wafer[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                    <!-- Options will be populated based on lot selection -->
+                </select>
+            </div>
+
+            <div class="col-span-3">
+                <label for="parameter" class="block text-sm font-medium text-gray-700">Parameter</label>
+                <select id="parameter" name="parameter[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                    <!-- Options will be populated based on wafer selection -->
+                </select>
+            </div>
         </div>
-        <div class="text-center">
-            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">SELECT</button>
+        <div class="text-right w-full flex justify-end gap-4">
+            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Select</button>
+            <button type="button" id="resetButton" class="px-4 py-2 bg-red-500 text-white rounded">Reset</button>
         </div>
     </form>
 </div>
-</body>
-</html>
+
+<script>
+$(document).ready(function() {
+    // Function to fetch options based on previous selection
+    function fetchOptions(selectedValue, targetElement, queryType) {
+        $.ajax({
+            url: 'fetch_options.php',
+            method: 'GET',
+            data: {
+                value: selectedValue,
+                type: queryType
+            },
+            dataType: 'json',
+            success: function(response) {
+                let options = '';
+                if (queryType === 'parameter') {
+                    $.each(response, function(index, item) {
+                        options += `<option value="${item.value}">${item.display}</option>`;
+                    });
+                } else {
+                    $.each(response, function(index, value) {
+                        options += `<option value="${value}">${value}</option>`;
+                    });
+                }
+                targetElement.html(options);
+            }
+        });
+    }
+
+    // Event listeners for each select element
+    $('#facility').change(function() {
+        let selectedValue = $(this).val();
+        fetchOptions(selectedValue, $('#work_center'), 'work_center');
+    });
+
+    $('#work_center').change(function() {
+        let selectedValue = $(this).val();
+        fetchOptions(selectedValue, $('#device_name'), 'device_name');
+    });
+
+    $('#device_name').change(function() {
+        let selectedValue = $(this).val();
+        fetchOptions(selectedValue, $('#test_program'), 'test_program');
+    });
+
+    $('#test_program').change(function() {
+        let selectedValue = $(this).val();
+        fetchOptions(selectedValue, $('#lot'), 'lot');
+    });
+
+    $('#lot').change(function() {
+        let selectedValue = $(this).val();
+        fetchOptions(selectedValue, $('#wafer'), 'wafer');
+    });
+
+    $('#wafer').change(function() {
+        let selectedValue = $(this).val();
+        fetchOptions(selectedValue, $('#parameter'), 'parameter');
+    });
+
+    // Reset button functionality
+    $('#resetButton').click(function() {
+        // Clear all the selections except facility
+        $('#work_center').html('');
+        $('#device_name').html('');
+        $('#test_program').html('');
+        $('#lot').html('');
+        $('#wafer').html('');
+        $('#parameter').html('');
+
+        // Reset the facility selection
+        $('#facility').val(null).trigger('change');
+    });
+});
+</script>

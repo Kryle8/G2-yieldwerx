@@ -40,7 +40,8 @@ $column_list = !empty($filters['tm.Column_Name']) ? implode(', ', array_map(func
 // Fetch all data from the query
 $tsql = "SELECT l.Facility_ID, l.Work_Center, l.Part_Type, l.Program_Name, l.Test_Temprature, l.Lot_ID,
                 w.Wafer_ID, w.Wafer_Start_Time, w.Wafer_Finish_Time, d1.Unit_Number, d1.X, d1.Y, d1.Head_Number,
-                d1.Site_Number, d1.HBin_Number, d1.SBin_Number, d1.Tests_Executed, d1.Test_Time, $column_list
+                d1.Site_Number, d1.HBin_Number, d1.SBin_Number, d1.Tests_Executed, d1.Test_Time,
+                tm.Column_Name, tm.Test_Name, $column_list
          FROM DEVICE_1_CP1_V1_0_001 d1
          JOIN WAFER w ON w.Wafer_Sequence = d1.Wafer_Sequence
          JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
@@ -55,21 +56,35 @@ if ($stmt === false) {
     die(print_r(sqlsrv_errors(), true));
 }
 
-// Add column headers
+// Create an array to map Column_Name to Test_Name
+$column_to_test_name_map = [];
+while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+    if (!empty($row['Column_Name']) && !empty($row['Test_Name'])) {
+        $column_to_test_name_map[$row['Column_Name']] = $row['Test_Name'];
+    }
+}
+sqlsrv_free_stmt($stmt);
+
+// Merge static columns with dynamic columns and replace with test names
 $columns = [
-    'Facility_ID', 'Work_Center', 'Part_Type', 'Program_Name', 'Test_Temprature', 'Lot_ID', 'Wafer_ID', 
-    'Wafer_Start_Time', 'Wafer_Finish_Time', 'Unit_Number', 'X', 'Y', 'Head_Number', 'Site_Number', 
+    'Facility_ID', 'Work_Center', 'Part_Type', 'Program_Name', 'Test_Temprature', 'Lot_ID', 'Wafer_ID',
+    'Wafer_Start_Time', 'Wafer_Finish_Time', 'Unit_Number', 'X', 'Y', 'Head_Number', 'Site_Number',
     'HBin_Number', 'SBin_Number', 'Tests_Executed', 'Test_Time'
 ];
-// Merge static columns with dynamic columns
 $all_columns = array_merge($columns, $filters['tm.Column_Name']);
+$headers = array_map(function($column) use ($column_to_test_name_map) {
+    return isset($column_to_test_name_map[$column]) ? $column_to_test_name_map[$column] : $column;
+}, $all_columns);
 
-fputcsv($output, $all_columns);
+// Add column headers to the CSV
+fputcsv($output, $headers);
 
+// Re-execute query to fetch data for export
+$stmt = sqlsrv_query($conn, $tsql, $params);
 while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
     $csv_row = [];
     foreach ($all_columns as $column) {
-        $value = $row[$column] ?? '';
+        $value = isset($row[$column]) ? $row[$column] : '';
         if ($value instanceof DateTime) {
             $csv_row[] = $value->format('Y-m-d H:i:s');
         } else {
