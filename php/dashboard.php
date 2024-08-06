@@ -22,10 +22,34 @@
       .content-container {
          margin-top: 60px; /* Adjust this value if necessary to avoid overlapping with the navbar */
       }
+      .bg-primary {
+         background-color: #E2DAD6;
+      }
+      .bg-secondary {
+         background-color: #7FA1C3;
+      }
+      .bg-tertiary {
+         background-color: #E2DAD6;
+      }
+      .bg-quaternary {
+         background-color: #F5EDED;
+      }
+      .text-primary {
+         color: #6482AD;
+      }
+      .text-secondary {
+         color: #7FA1C3;
+      }
+      .text-tertiary {
+         color: #E2DAD6;
+      }
+      .text-quaternary {
+         color: #F5EDED;
+      }
    </style>
 </head>
-<body class="bg-gray-100">
-<nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+<body class="bg-quaternary">
+<nav class="fixed top-0 z-50 w-full bg-primary border-b border-secondary dark:bg-gray-800 dark:border-gray-700">
   <div class="px-3 py-3 lg:px-5 lg:pl-3">
     <div class="logo-centered">
       <a href="https://flowbite.com" class="flex">
@@ -36,7 +60,7 @@
 </nav>
 
 <div class="content-container">
-   <div class="p-4 rounded-lg dark:border-gray-700">
+   <div class="p-4 rounded-lg bg-secondary dark:border-gray-700">
       <div>
          <?php include('extracted_table.php'); ?>
       </div>

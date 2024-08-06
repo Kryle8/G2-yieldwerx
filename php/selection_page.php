@@ -17,10 +17,34 @@
          align-items: center;
          height: 100%;
       }
+      .bg-primary {
+         background-color: #E2DAD6;
+      }
+      .bg-secondary {
+         background-color: #7FA1C3;
+      }
+      .bg-tertiary {
+         background-color: #E2DAD6;
+      }
+      .bg-quaternary {
+         background-color: #F5EDED;
+      }
+      .text-primary {
+         color: #6482AD;
+      }
+      .text-secondary {
+         color: #7FA1C3;
+      }
+      .text-tertiary {
+         color: #E2DAD6;
+      }
+      .text-quaternary {
+         color: #F5EDED;
+      }
    </style>
 </head>
-<body class="bg-gray-100">
-<nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+<body class="bg-quaternary">
+<nav class="fixed top-0 z-50 w-full bg-primary border-b border-secondary dark:bg-gray-800 dark:border-gray-700">
   <div class="px-3 py-3 lg:px-5 lg:pl-3">
     <div class="flex items-center justify-center h-12">
       <a href="https://flowbite.com" class="center-logo">
@@ -31,7 +55,7 @@
 </nav>
 
 <div class="p-4">
-   <div class="p-4 rounded-lg dark:border-gray-700 mt-14">
+   <div class="p-4 rounded-lg bg-secondary dark:border-gray-700 mt-14">
       <div>
       <?php include('selection_criteria.php');?>
       </div>

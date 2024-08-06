@@ -132,8 +132,8 @@ $yLabelsJson = json_encode($yLabels);
                     datasets: [{
                         label: `${dataSet.x} vs ${dataSet.y}`,
                         data: dataSet.data,
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(100, 130, 173, 0.6)', // Using #6482AD with some opacity
+                        borderColor: 'rgba(100, 130, 173, 1)',       // Using #6482AD
                         pointRadius: 2,
                         showLine: false
                     }]
