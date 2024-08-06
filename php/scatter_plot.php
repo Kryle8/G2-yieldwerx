@@ -50,16 +50,13 @@ if ($stmt === false) {
     die(print_r(sqlsrv_errors(), true));
 }
 
-// Debug: Check if any rows are fetched
-$rowCount = 0;
-
 // Fetch data and prepare for Chart.js
 $dataSets = [];
 $xLabels = [];
 $yLabels = [];
 
 // Check if at least one parameter is selected
-if (!empty($filters['tm.Column_Name'])) {
+if (count($filters['tm.Column_Name']) >= 1) {
     // Generate all combinations of selected parameters
     foreach ($filters['tm.Column_Name'] as $xLabel) {
         foreach ($filters['tm.Column_Name'] as $yLabel) {
@@ -71,7 +68,6 @@ if (!empty($filters['tm.Column_Name'])) {
 
     // Process rows from the SQL query
     while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-        $rowCount++;
         foreach ($dataSets as $i => $dataSet) {
             $xValue = floatval($row[$dataSet['x']]);
             $yValue = floatval($row[$dataSet['y']]);
@@ -83,11 +79,6 @@ if (!empty($filters['tm.Column_Name'])) {
 // Free the statement after fetching the data
 sqlsrv_free_stmt($stmt);
 
-// Debug: Output row count
-if ($rowCount == 0) {
-    echo "No rows fetched.";
-}
-
 // Encode the datasets for JSON output
 $datasetsJson = json_encode($dataSets);
 $xLabelsJson = json_encode($xLabels);
@@ -97,36 +88,50 @@ $yLabelsJson = json_encode($yLabels);
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Scatter Plot</title>
+    <title>Scatter Plots</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #chartsContainer {
+            display: grid;
+            grid-gap: 10px;
+            justify-content: center;
+        }
+        .chart-container {
+            width: 300px;
+            height: 300px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mx-auto p-6">
-        <h1 class="text-center text-2xl font-bold mb-4 w-full">Scatter Plot</h1>
-        <div class="grid grid-cols-3 gap-4">
-            <?php foreach ($dataSets as $index => $dataSet): ?>
-                <div>
-                    <canvas id="scatterChart<?= $index ?>"></canvas>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
+    <div id="chartsContainer"></div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const dataSets = <?= $datasetsJson ?>;
+        const dataSets = <?= $datasetsJson; ?>;
+        const xLabels = <?= $xLabelsJson; ?>;
+        const yLabels = <?= $yLabelsJson; ?>;
+        const chartsContainer = document.getElementById('chartsContainer');
+
+        const numParams = Math.sqrt(dataSets.length);
+        chartsContainer.style.gridTemplateColumns = `repeat(${numParams}, 1fr)`;
+
         dataSets.forEach((dataSet, index) => {
-            const ctx = document.getElementById('scatterChart' + index).getContext('2d');
-            new Chart(ctx, {
+            const div = document.createElement('div');
+            div.className = 'chart-container';
+            const canvas = document.createElement('canvas');
+            canvas.id = `chart-${index}`;
+            div.appendChild(canvas);
+            chartsContainer.appendChild(div);
+
+            new Chart(canvas, {
                 type: 'scatter',
                 data: {
                     datasets: [{
-                        label: dataSet.x + ' vs ' + dataSet.y,
+                        label: `${dataSet.x} vs ${dataSet.y}`,
                         data: dataSet.data,
                         backgroundColor: 'rgba(75, 192, 192, 0.6)',
                         borderColor: 'rgba(75, 192, 192, 1)',
-                        pointRadius: 3,
-                        pointHoverRadius: 5
+                        pointRadius: 2,
+                        showLine: false
                     }]
                 },
                 options: {
@@ -149,7 +154,6 @@ $yLabelsJson = json_encode($yLabels);
                 }
             });
         });
-    });
     </script>
 </body>
 </html>
