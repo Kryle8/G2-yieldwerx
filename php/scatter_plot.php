@@ -58,8 +58,12 @@ $yLabels = [];
 // Check if at least one parameter is selected
 if (count($filters['tm.Column_Name']) >= 1) {
     // Generate all combinations of selected parameters
-    foreach ($filters['tm.Column_Name'] as $xLabel) {
-        foreach ($filters['tm.Column_Name'] as $yLabel) {
+    $params = $filters['tm.Column_Name'];
+    $numParams = count($params);
+    for ($i = $numParams - 1; $i >= 0; $i--) {
+        for ($j = 0; $j < $numParams; $j++) {
+            $xLabel = $params[$i];
+            $yLabel = $params[$j];
             $xLabels[] = $xLabel;
             $yLabels[] = $yLabel;
             $dataSets[] = ['x' => $xLabel, 'y' => $yLabel, 'data' => []];
