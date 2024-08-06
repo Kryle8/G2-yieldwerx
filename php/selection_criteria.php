@@ -17,7 +17,7 @@ sqlsrv_free_stmt($stmt);
     }
 </style>
 <div class="container mx-auto p-6">
-    <h1 class="text-center text-2xl font-bold mb-4 w-full">Selection Criteria</h1>
+    <h1 class="text-center text-2xl font-bold mb-4 w-full text-gray-700">Selection Criteria</h1>
     <form action="dashboard.php" method="GET" id="criteriaForm">
         <div class="grid grid-cols-3 gap-4 mb-4">
             <div>
