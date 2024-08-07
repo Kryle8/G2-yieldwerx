@@ -63,9 +63,7 @@ sqlsrv_free_stmt($stmt);
                     <!-- Options will be populated based on lot selection -->
                 </select>
             </div>
-
-        </div>
-        <div class="grid grid-cols-1 gap-4 mb-4">
+            
                         <!-- Parameter selection -->
                         <div>
                 <label for="parameter" class="block text-sm font-bold text-cyan-700">Parameter</label>
