@@ -97,6 +97,9 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
 <div class="flex justify-center items-center h-full">
     <div class="w-full max-w-7xl p-6 rounded-lg shadow-lg bg-white mt-10">
         <div class="mb-4 text-right">
+            <a href="selection_page.php" class="px-4 py-2 bg-blue-500 text-white rounded mr-4">
+                Back to Selection
+            </a>
             <a href="scatter_plot.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-orange-500 text-white rounded mr-4">
                 <i class="fa-solid fa-chart-scatter"></i>
                 Generate Scatter Plot
