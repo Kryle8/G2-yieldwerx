@@ -64,10 +64,6 @@ sqlsrv_free_stmt($stmt);
                 </select>
             </div>
 
-        </div>
-        
-        <div class="grid grid-cols-1 gap-0 mb-0"></div>
-
             <!-- Parameter selection -->
             <div>
                 <label for="parameter" class="block text-sm font-bold text-cyan-700">Parameter</label>
@@ -76,6 +72,8 @@ sqlsrv_free_stmt($stmt);
                 </select>
             </div>
             
+
+        </div>
 
 
         <div class="text-right w-full flex justify-end gap-4">
