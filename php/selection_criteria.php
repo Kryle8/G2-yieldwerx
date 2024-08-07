@@ -80,7 +80,7 @@ sqlsrv_free_stmt($stmt);
 
         <div class="text-right w-full flex justify-end gap-4">
             <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded mt-3">Select</button>
-            <button type="button" id="resetButton" class="px-4 py-2 bg-red-500 text-white rounded mt-3">Reset</button>
+            <button type="button" id="resetButton" class="px-4 py-2 bg-gray-500 text-white rounded mt-3">Reset</button>
         </div>
     </form>
 </div>
