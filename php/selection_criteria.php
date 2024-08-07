@@ -64,15 +64,15 @@ sqlsrv_free_stmt($stmt);
                 </select>
             </div>
 
-            <!-- Parameter selection -->
-            <div>
+        </div>
+        <div class="grid grid-cols-1 gap-4 mb-4">
+                        <!-- Parameter selection -->
+                        <div>
                 <label for="parameter" class="block text-sm font-bold text-cyan-700">Parameter</label>
                 <select id="parameter" name="parameter[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
                     <!-- Options will be populated based on wafer selection -->
                 </select>
             </div>
-            
-
         </div>
 
 
