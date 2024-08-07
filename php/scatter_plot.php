@@ -1,6 +1,9 @@
 <?php
 require __DIR__ . '/../connection.php';
 
+$groupLot = isset($_GET['group_lot']) ? true : false;
+$groupWafer = isset($_GET['group_wafer']) ? true : false;
+
 // Filters from URL parameters
 $filters = [
     "l.Facility_ID" => isset($_GET['facility']) ? $_GET['facility'] : [],
@@ -32,132 +35,183 @@ if (!empty($sql_filters)) {
 // Dynamically construct the column part of the SQL query
 $column_list = !empty($filters['tm.Column_Name']) ? implode(', ', array_map(function($col) { return "d1.$col"; }, $filters['tm.Column_Name'])) : '*';
 
-// Retrieve all records with filters
-$tsql = "SELECT l.Facility_ID, l.Work_Center, l.Part_Type, l.Program_Name, l.Test_Temprature, l.Lot_ID,
-                w.Wafer_ID, w.Wafer_Start_Time, w.Wafer_Finish_Time, d1.Unit_Number, d1.X, d1.Y, d1.Head_Number,
-                d1.Site_Number, d1.HBin_Number, d1.SBin_Number, d1.Tests_Executed, d1.Test_Time, 
-                tm.Column_Name, tm.Test_Name, $column_list
+// Initialize the data array
+$data = [];
+$xLabel = $filters['tm.Column_Name'][0] ?? 'X';
+$yLabel = $filters['tm.Column_Name'][1] ?? 'Y';
+$xTestName = '';
+$yTestName = '';
+
+// Query to fetch data for the chart
+$tsql = "SELECT w.Wafer_ID, d1.{$filters['tm.Column_Name'][0]} AS X, d1.{$filters['tm.Column_Name'][1]} AS Y, tm.Test_Name
          FROM DEVICE_1_CP1_V1_0_001 d1
          JOIN WAFER w ON w.Wafer_Sequence = d1.Wafer_Sequence
          JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
          JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
          JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
-         $where_clause
-         ORDER BY w.Wafer_ID";
+         $where_clause";
 
 $stmt = sqlsrv_query($conn, $tsql, $params);
 if ($stmt === false) {
     die(print_r(sqlsrv_errors(), true));
 }
 
-// Fetch data and prepare for Chart.js
-$dataSets = [];
-$xLabels = [];
-$yLabels = [];
-
-// Check if at least one parameter is selected
-if (count($filters['tm.Column_Name']) >= 1) {
-    // Generate all combinations of selected parameters
-    $params = $filters['tm.Column_Name'];
-    $numParams = count($params);
-    for ($i = $numParams - 1; $i >= 0; $i--) {
-        for ($j = 0; $j < $numParams; $j++) {
-            $xLabel = $params[$i];
-            $yLabel = $params[$j];
-            $xLabels[] = $xLabel;
-            $yLabels[] = $yLabel;
-            $dataSets[] = ['x' => $xLabel, 'y' => $yLabel, 'data' => []];
-        }
+// Fetch and prepare data for Chart.js
+$groupedData = [];
+while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+    if (!$xTestName) {
+        $xTestName = $row['Test_Name'];
+    } elseif (!$yTestName) {
+        $yTestName = $row['Test_Name'];
     }
-
-    // Process rows from the SQL query
-    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-        foreach ($dataSets as $i => $dataSet) {
-            $xValue = floatval($row[$dataSet['x']]);
-            $yValue = floatval($row[$dataSet['y']]);
-            $dataSets[$i]['data'][] = ['x' => $xValue, 'y' => $yValue];
-        }
+    $waferID = $row['Wafer_ID'];
+    $xValue = floatval($row['X']);
+    $yValue = floatval($row['Y']);
+    
+    if ($groupWafer) {
+        $groupedData[$waferID][] = ['x' => $xValue, 'y' => $yValue];
+    } else {
+        $groupedData['all'][] = ['x' => $xValue, 'y' => $yValue];
     }
 }
-
-// Free the statement after fetching the data
 sqlsrv_free_stmt($stmt);
 
-// Encode the datasets for JSON output
-$datasetsJson = json_encode($dataSets);
-$xLabelsJson = json_encode($xLabels);
-$yLabelsJson = json_encode($yLabels);
+// Sort groupedData by wafer ID
+if ($groupWafer) {
+    ksort($groupedData);
+}
+
+// Calculate the number of distinct wafer IDs
+$numDistinctWafers = count($groupedData);
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Scatter Plots</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        #chartsContainer {
-            display: grid;
-            grid-gap: 10px;
-            justify-content: center;
-        }
-        .chart-container {
-            width: 300px;
-            height: 300px;
-        }
-    </style>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>XY Scatter Plot</title>
+   <link rel="stylesheet" href="../src/output.css">
+   <link href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css" rel="stylesheet" />
+   <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   <style>
+       .chart-container {
+           overflow: auto;
+           max-height: 75vh;
+           max-width: 100%;
+       }
+       table {
+           width: 100%;
+           border-collapse: collapse;
+       }
+       td {
+           padding: 16px;
+       }
+       canvas{
+        height:300px;
+       }
+   </style>
 </head>
-<body>
-    <div id="chartsContainer"></div>
+<body class="bg-gray-50">
+<?php include('admin_components.php'); ?>
+<div class="p-4 sm:ml-32">
+    <div class="p-4 rounded-lg dark:border-gray-700 mt-14">
+        <h1 class="text-center text-2xl font-bold mb-4 w-full">XY Scatter Plot</h1>
+        <div class="chart-container">
+            <table>
+                <tbody>
+                    <tr>
+                    <?php
+                    if ($groupWafer) {
+                        foreach ($groupedData as $waferID => $data) {
+                            echo '<td><div class="flex items-center justify-start flex-col"><h2 class="text-center text-xl font-semibold">Wafer ID: ' . $waferID . '</h2>';
+                            echo '<canvas id="chartXY_' . $waferID . '"></canvas></div></td>';
+                        }
+                    } else {
+                        echo '<td><canvas id="chartXY_all"></canvas></td>';
+                    }
+                    ?>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const groupedData = <?php echo json_encode($groupedData); ?>;
+            const xTestName = <?php echo json_encode($xTestName); ?>;
+            const yTestName = <?php echo json_encode($yTestName); ?>;
 
-    <script>
-        const dataSets = <?= $datasetsJson; ?>;
-        const xLabels = <?= $xLabelsJson; ?>;
-        const yLabels = <?= $yLabelsJson; ?>;
-        const chartsContainer = document.getElementById('chartsContainer');
-
-        const numParams = Math.sqrt(dataSets.length);
-        chartsContainer.style.gridTemplateColumns = `repeat(${numParams}, 1fr)`;
-
-        dataSets.forEach((dataSet, index) => {
-            const div = document.createElement('div');
-            div.className = 'chart-container';
-            const canvas = document.createElement('canvas');
-            canvas.id = `chart-${index}`;
-            div.appendChild(canvas);
-            chartsContainer.appendChild(div);
-
-            new Chart(canvas, {
-                type: 'scatter',
-                data: {
-                    datasets: [{
-                        label: `${dataSet.x} vs ${dataSet.y}`,
-                        data: dataSet.data,
-                        backgroundColor: 'rgba(100, 130, 173, 0.6)', // Using #6482AD with some opacity
-                        borderColor: 'rgba(100, 130, 173, 1)',       // Using #6482AD
-                        pointRadius: 2,
-                        showLine: false
-                    }]
-                },
-                options: {
-                    scales: {
-                        x: {
-                            type: 'linear',
-                            position: 'bottom',
-                            title: {
-                                display: true,
-                                text: dataSet.x
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: dataSet.y
+            if (groupedData['all']) {
+                new Chart(document.getElementById('chartXY_all').getContext('2d'), {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: xTestName + ' vs. ' + yTestName,
+                            data: groupedData['all'].map(d => ({ x: d.x, y: d.y })),
+                            backgroundColor: 'rgba(192, 192, 75, 0.6)'
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                type: 'linear',
+                                position: 'bottom',
+                                title: {
+                                    display: true,
+                                    text: xTestName
+                                }
+                            },
+                            y: {
+                                type: 'linear',
+                                title: {
+                                    display: true,
+                                    text: yTestName
+                                }
                             }
                         }
                     }
+                });
+            } else {
+                for (const waferID in groupedData) {
+                    const data = groupedData[waferID];
+
+                    new Chart(document.getElementById('chartXY_' + waferID).getContext('2d'), {
+                        type: 'scatter',
+                        data: {
+                            datasets: [{
+                                label: xTestName + ' vs. ' + yTestName,
+                                data: data.map(d => ({ x: d.x, y: d.y })),
+                                backgroundColor: 'rgba(192, 192, 75, 0.6)'
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                x: {
+                                    type: 'linear',
+                                    position: 'bottom',
+                                    title: {
+                                        display: true,
+                                        text: xTestName
+                                    }
+                                },
+                                y: {
+                                    type: 'linear',
+                                    title: {
+                                        display: true,
+                                        text: yTestName
+                                    }
+                                }
+                            }
+                        }
+                    });
                 }
-            });
+            }
         });
-    </script>
+        </script>
+    </div>
+</div>
 </body>
 </html>

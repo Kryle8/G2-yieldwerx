@@ -18,7 +18,11 @@ switch ($type) {
         $query = "SELECT DISTINCT Lot_ID FROM lot WHERE Program_Name IN ('" . implode("','", $value) . "')";
         break;
     case 'wafer':
-        $query = "SELECT DISTINCT wafer.Wafer_ID FROM wafer JOIN lot ON lot.Lot_Sequence = wafer.Lot_Sequence WHERE lot.Lot_ID IN ('" . implode("','", $value) . "') ORDER BY wafer.Wafer_ID";
+        $query = "SELECT DISTINCT wafer.Wafer_ID 
+                  FROM wafer 
+                  JOIN lot ON lot.Lot_Sequence = wafer.Lot_Sequence 
+                  WHERE lot.Lot_ID IN ('" . implode("','", $value) . "')
+                  ORDER BY wafer.Wafer_ID";
         break;
     case 'parameter':
         $query = "SELECT DISTINCT tm.Column_Name, tm.Test_Name 
