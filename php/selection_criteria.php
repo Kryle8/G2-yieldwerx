@@ -19,7 +19,7 @@ sqlsrv_free_stmt($stmt);
 <div class="container mx-auto p-6">
     <h1 class="text-center text-2xl font-bold mb-4 w-full text-cyan-700">Selection Criteria</h1>
     <form action="dashboard.php" method="GET" id="criteriaForm">
-        <div class="grid grid-cols-3 gap-4 mb-4">
+        <div class="grid grid-cols-2 gap-4 mb-4">
             <div>
                 <label for="facility" class="block text-sm font-medium text-cyan-700">Facility</label>
                 <select id="facility" name="facility[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
@@ -64,6 +64,10 @@ sqlsrv_free_stmt($stmt);
                 </select>
             </div>
 
+        </div>
+        
+        <div class="grid grid-cols-1 gap-0 mb-0"></div>
+
             <!-- Parameter selection -->
             <div>
                 <label for="parameter" class="block text-sm font-medium text-cyan-700">Parameter</label>
@@ -73,10 +77,10 @@ sqlsrv_free_stmt($stmt);
             </div>
             
 
-        </div>
+
         <div class="text-right w-full flex justify-end gap-4">
-            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Select</button>
-            <button type="button" id="resetButton" class="px-4 py-2 bg-red-500 text-white rounded">Reset</button>
+            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded mt-3">Select</button>
+            <button type="button" id="resetButton" class="px-4 py-2 bg-red-500 text-white rounded mt-3">Reset</button>
         </div>
     </form>
 </div>
