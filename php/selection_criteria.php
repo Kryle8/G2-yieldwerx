@@ -21,7 +21,7 @@ sqlsrv_free_stmt($stmt);
     <form action="dashboard.php" method="GET" id="criteriaForm">
         <div class="grid grid-cols-2 gap-4 mb-4">
             <div>
-                <label for="facility" class="block text-sm font-medium text-cyan-700">Facility</label>
+                <label for="facility" class="block text-sm font-bold text-cyan-700">Facility</label>
                 <select id="facility" name="facility[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
                     <?php foreach ($facilities as $facility): ?>
                         <option value="<?= $facility ?>"><?= $facility ?></option>
@@ -30,35 +30,35 @@ sqlsrv_free_stmt($stmt);
             </div>
 
             <div>
-                <label for="work_center" class="block text-sm font-medium text-cyan-700">Work Center</label>
+                <label for="work_center" class="block text-sm font-bold text-cyan-700">Work Center</label>
                 <select id="work_center" name="work_center[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
                     <!-- Options will be populated based on facility selection -->
                 </select>
             </div>
 
             <div>
-                <label for="device_name" class="block text-sm font-medium text-cyan-700">Device Name</label>
+                <label for="device_name" class="block text-sm font-bold text-cyan-700">Device Name</label>
                 <select id="device_name" name="device_name[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
                     <!-- Options will be populated based on work center selection -->
                 </select>
             </div>
 
             <div>
-                <label for="test_program" class="block text-sm font-medium text-cyan-700">Test Program</label>
+                <label for="test_program" class="block text-sm font-bold text-cyan-700">Test Program</label>
                 <select id="test_program" name="test_program[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
                     <!-- Options will be populated based on device name selection -->
                 </select>
             </div>
 
             <div>
-                <label for="lot" class="block text-sm font-medium text-cyan-700">Lot</label>
+                <label for="lot" class="block text-sm font-bold text-cyan-700">Lot</label>
                 <select id="lot" name="lot[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
                     <!-- Options will be populated based on test program selection -->
                 </select>
             </div>
 
             <div>
-                <label for="wafer" class="block text-sm font-medium text-cyan-700">Wafer</label>
+                <label for="wafer" class="block text-sm font-bold text-cyan-700">Wafer</label>
                 <select id="wafer" name="wafer[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
                     <!-- Options will be populated based on lot selection -->
                 </select>
@@ -70,7 +70,7 @@ sqlsrv_free_stmt($stmt);
 
             <!-- Parameter selection -->
             <div>
-                <label for="parameter" class="block text-sm font-medium text-cyan-700">Parameter</label>
+                <label for="parameter" class="block text-sm font-bold text-cyan-700">Parameter</label>
                 <select id="parameter" name="parameter[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
                     <!-- Options will be populated based on wafer selection -->
                 </select>
