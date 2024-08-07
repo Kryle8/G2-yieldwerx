@@ -26,7 +26,7 @@
          background-color: #fff;
       }
       .bg-secondary {
-         background-color: #7FA1C3;
+         background: linear-gradient(to top, #7FA1C3, #fff);
       }
       .bg-tertiary {
          background-color: #E2DAD6;
