@@ -76,7 +76,7 @@ if ($groupByParam && $groupByParamSelect && $groupByDirection) {
 
     // Prepare datasets for Chart.js
     foreach ($groupedData as $param => $dataSet) {
-        $label = $groupByDirection == 'horizontal' ? "$param vs $groupByParamSelect" : "$groupByParamSelect vs $param";
+        $label = ($groupByDirection == 'horizontal' ? "$param vs $groupByParamSelect" : "$groupByParamSelect vs $param") ?: 'Default Label';
         $dataSets[] = [
             'x' => $groupByDirection == 'horizontal' ? $param : $groupByParamSelect,
             'y' => $groupByDirection == 'horizontal' ? $groupByParamSelect : $param,
@@ -98,7 +98,12 @@ if ($groupByParam && $groupByParamSelect && $groupByDirection) {
                 $yLabel = $params[$j];
                 $xLabels[] = $xLabel;
                 $yLabels[] = $yLabel;
-                $dataSets[] = ['x' => $xLabel, 'y' => $yLabel, 'data' => []];
+                $dataSets[] = [
+                    'x' => $xLabel,
+                    'y' => $yLabel,
+                    'data' => [],
+                    'label' => "$xLabel vs $yLabel"
+                ];
             }
         }
 
@@ -130,12 +135,12 @@ $yLabelsJson = json_encode($yLabels);
     <style>
         #chartsContainer {
             display: grid;
-            grid-gap: 10px;
             justify-content: center;
+            grid-gap: 5px; /* Reduce gap between charts */
         }
         .chart-container {
-            width: 300px;
-            height: 300px;
+            width: 100%; /* Allow width to adjust dynamically */
+            height: 100%; /* Allow height to adjust dynamically */
         }
     </style>
 </head>
@@ -144,16 +149,21 @@ $yLabelsJson = json_encode($yLabels);
 
     <script>
         const dataSets = <?= $datasetsJson; ?>;
-        const xLabels = <?= $xLabelsJson; ?>;
-        const yLabels = <?= $yLabelsJson; ?>;
         const chartsContainer = document.getElementById('chartsContainer');
 
-        const numParams = Math.sqrt(dataSets.length);
-        chartsContainer.style.gridTemplateColumns = `repeat(${numParams}, 1fr)`;
+        // Calculate the number of columns based on the number of charts
+        const numCharts = dataSets.length;
+        const numColumns = Math.ceil(Math.sqrt(numCharts));
+        const chartSize = 100 / numColumns; // Dynamic size calculation
+
+        chartsContainer.style.gridTemplateColumns = `repeat(${numColumns}, ${chartSize}%)`;
+        chartsContainer.style.gridTemplateRows = `repeat(${numColumns}, ${chartSize}vh)`; // Use viewport height for responsive design
 
         dataSets.forEach((dataSet, index) => {
             const div = document.createElement('div');
             div.className = 'chart-container';
+            div.style.width = `${chartSize}vw`;  // Set width based on available space
+            div.style.height = `${chartSize}vh`; // Set height based on available space
             const canvas = document.createElement('canvas');
             canvas.id = `chart-${index}`;
             div.appendChild(canvas);
@@ -163,7 +173,7 @@ $yLabelsJson = json_encode($yLabels);
                 type: 'scatter',
                 data: {
                     datasets: [{
-                        label: dataSet.label,
+                        label: dataSet.label || `${dataSet.x} vs ${dataSet.y}`,
                         data: dataSet.data,
                         backgroundColor: 'rgba(100, 130, 173, 0.6)', // Using #6482AD with some opacity
                         borderColor: 'rgba(100, 130, 173, 1)',       // Using #6482AD
