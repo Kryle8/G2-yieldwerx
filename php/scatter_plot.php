@@ -51,6 +51,7 @@ if ($stmt === false) {
 }
 
 // Fetch 'group by' selections
+$groupByWafer = isset($_GET['group_wafer']) ? true : false;
 $groupByParam = isset($_GET['group_by_param']) ? true : false;
 $groupByParamSelect = $_GET['group_by_param_select'] ?? null;
 $groupByDirection = $_GET['group_by_direction'] ?? null;
@@ -60,7 +61,33 @@ $dataSets = [];
 $xLabels = [];
 $yLabels = [];
 
-if ($groupByParam && $groupByParamSelect && $groupByDirection) {
+if ($groupByWafer) {
+    $groupedData = [];
+
+    // Process rows from the SQL query
+    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+        $waferID = $row['Wafer_ID'];
+        foreach ($filters['tm.Column_Name'] as $param) {
+            if (!isset($groupedData[$waferID])) {
+                $groupedData[$waferID] = [];
+            }
+            $groupedData[$waferID]['data'][] = ['x' => floatval($row['X']), 'y' => floatval($row[$param])];
+        }
+    }
+
+    // Prepare datasets for Chart.js
+    foreach ($groupedData as $waferID => $dataSet) {
+        $label = "Wafer ID: $waferID";
+        $dataSets[] = [
+            'x' => 'X',
+            'y' => $filters['tm.Column_Name'][0], // Assuming you group by the first selected parameter
+            'data' => $dataSet['data'],
+            'label' => $label
+        ];
+        $xLabels[] = 'X';
+        $yLabels[] = $filters['tm.Column_Name'][0];
+    }
+} elseif ($groupByParam && $groupByParamSelect && $groupByDirection) {
     $groupedData = [];
 
     // Process rows from the SQL query
