@@ -91,14 +91,14 @@ sqlsrv_free_stmt($filterStmt);
             </div>
 
             <div class="custom-box">
-                <label class="block text-sm font-medium text-gray-700">Filter by</label>
+                <label class="block text-sm font-medium text-gray-700"></label>
                 <div class="flex flex-col gap-4">
                     <!-- Filter by -->
                     <div class="border-2 border-gray-200 rounded-lg p-4">
                         <h2 class="text-md italic mb-4 text-gray-500 bg-gray-50 filter-text-header text-center"><i class="fa-solid fa-filter"></i>&nbsp;Filter by</h2>
                         <div class="flex w-full justify-start items-start gap-2">
                             <button id="dropdownSearchButton" data-dropdown-toggle="dropdownSearch" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800" type="button">
-                                Abbreviation
+                                Probe Count
                                 <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                                 </svg>
@@ -133,10 +133,10 @@ sqlsrv_free_stmt($filterStmt);
                 <div class="border-2 border-gray-200 rounded-lg p-4">
                     <h2 class="text-md italic mb-4 text-gray-500 bg-gray-50 filter-text-header text-center"><i class="fa-solid fa-layer-group"></i>&nbsp;Group by</h2>
                     <div class="flex w-full justify-start items-center gap-2">
-                        <div class="flex items-center me-4">
-                            <input id="lot-checkbox" name="group_lot" type="checkbox" value="1" class="w-4 h-4 text-yellow-400 bg-gray-100 border-gray-300 rounded focus:ring-yellow-500 dark:focus:ring-yellow-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                            <label for="lot-checkbox" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Lot</label>
-                        </div>
+                    <div class="flex items-center me-4">
+                        <input id="lot-checkbox" name="group_lot" type="checkbox" value="1" class="w-4 h-4 text-yellow-400 bg-gray-100 border-gray-300 rounded focus:ring-yellow-500 dark:focus:ring-yellow-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="lot-checkbox" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Lot</label>
+                    </div>
                         <div class="flex items-center me-4">
                             <input id="wafer-checkbox" name="group_wafer" type="checkbox" value="1" class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="wafer-checkbox" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Wafer</label>
