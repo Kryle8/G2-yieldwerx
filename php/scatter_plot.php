@@ -199,6 +199,13 @@ $yLabelsJson = json_encode($yLabels);
     </style>
 </head>
 <body>
+        
+        <div class="mb-4 flex justify-between items-center">
+            <a href="extracted_table.php" class="px-4 py-2 bg-blue-500 text-white rounded mr-4">
+                Back to Table
+            </a>
+        </div>
+
     <div id="chartsContainer"></div>
 
     <script>
