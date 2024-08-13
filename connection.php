@@ -4,7 +4,7 @@ require __DIR__ . '/config.php';
 
 $serverName = "RYL";
 $connectionOptions = [
-    "Database"=>"yieldWerx_OJT2024",
+    "Database"=>"yieldWerx_OJT2024_Updated",
     "Uid"=>"",
     "PWD"=>""
 ];
