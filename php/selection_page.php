@@ -13,11 +13,15 @@
       .ml-16 {
             margin-left: 4rem /* 64px */;
         }
+      
+      .background {
+        background-image: linear-gradient(to bottom, white, #BAE6FD);
+      }
     </style>
 </head>
-<body class="bg-gradient-to-b from-blue-50 to-blue-500">
+<body class="background">
 <?php include('admin_components.php'); ?>
-<!-- <nav class="flex mt-24 ml-16" aria-label="Breadcrumb">
+<nav class="flex mt-24 ml-16" aria-label="Breadcrumb">
   <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
     <li class="inline-flex items-center">
       
@@ -27,7 +31,7 @@
         <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Selection Criteria</span>
     </li>
   </ol>
-</nav> -->
+</nav>
 <div class="p-4">
    <div class="p-4 rounded-lg dark:border-gray-700">
 <?php include('selection_criteria.php');?>
