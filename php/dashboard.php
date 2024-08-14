@@ -21,7 +21,7 @@
 </head>
 <body class="bgtable">
 <?php include('admin_components.php'); ?>
-<nav class="flex mt-24 ml-16" aria-label="Breadcrumb">
+<!-- <nav class="flex mt-24 ml-16" aria-label="Breadcrumb">
   <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
     <li class="inline-flex items-center">
       <a href="selection_page.php" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
@@ -40,7 +40,7 @@
       </div>
     </li>
   </ol>
-</nav>
+</nav> -->
 <div class="p-4">
    <div class="rounded-lg dark:border-gray-700">
    <h1 class="text-center text-2xl font-bold mb-4 w-full">Extracted Table</h1>
