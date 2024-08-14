@@ -2,7 +2,7 @@
 
 require __DIR__ . '/config.php';
 
-$serverName = "RYL";
+$serverName = "FFORN\SQLEXPRESS";
 $connectionOptions = [
     "Database"=>"yieldWerx_OJT2024",
     "Uid"=>"",
