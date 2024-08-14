@@ -67,7 +67,7 @@ $columns = [
     }
 </style>
 
-<div class="container mx-auto px-12 py-6 bg-white rounded-md shadow-md">
+<div class="container mx-auto px-12 py-6 rounded-md shadow-md">
     <h1 class="text-center text-2xl font-bold mb-6 w-full">Selection Criteria</h1>
     <form action="dashboard.php" method="GET" id="criteriaForm">
         <div class="flex flex-row justify-between w-full gap-4">
