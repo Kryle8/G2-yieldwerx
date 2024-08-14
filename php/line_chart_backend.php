@@ -59,7 +59,6 @@ $parameters = $filters['tm.Column_Name'];
 $data = [];
 $groupedData = [];
 
-
 foreach ($parameters as $parameter) {
 
     $globalCounters = [

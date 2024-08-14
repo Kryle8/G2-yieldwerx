@@ -50,6 +50,9 @@ include('line_chart_backend.php');
         .max-w-5xl {
             max-width: 64rem /* 1024px */;
         }
+        .w-custom {
+            width: 32rem /* 512px */;
+        }
    </style>
 </head>
 <body class="bg-gray-50">
@@ -105,7 +108,7 @@ foreach ($groupedData as $parameter => $data) {
         echo '<div class="grid gap-2 grid-cols-1">';
         foreach ($data as $yGroup => $chartData) {
             $chartId = "chartXY_{$parameter}_{$yGroup}";
-            echo '<div class="flex flex-row justify-center items-center">';
+            echo '<div class="flex flex-row justify-center items-center w-custom">';
             echo '<div class="text-center"><h2 class="text-center text-xl font-semibold mb-4 -rotate-90">' . $yGroup . '</h2></div>';
             echo "<canvas id='{$chartId}'></canvas>";
             echo '</div>';

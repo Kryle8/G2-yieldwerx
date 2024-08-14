@@ -139,11 +139,11 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
                 <i class="fa-solid fa-list"></i>&nbsp;Selection Criteria
             </a>
             <?php if ($chart == 1): ?>
-                <a href="graph.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
+                <a href="graph.php?<?php echo http_build_query($_GET); ?>" target="_blank" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
                     <i class="fa-solid fa-chart-area"></i>&nbsp;XY Scatter Plot
                 </a>
             <?php else: ?>
-                <a href="line_chart.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
+                <a href="line_chart.php?<?php echo http_build_query($_GET); ?>" target="_blank" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
                     <i class="fa-solid fa-chart-line"></i>&nbsp;Line Chart
                 </a>
             <?php endif; ?>

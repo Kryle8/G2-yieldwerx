@@ -16,11 +16,12 @@
         <?php if ($yIndex !== null): ?>
           <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Group by (Y):</b> <?php echo preg_replace('/^[^\.]*\./', '', $columns[$yIndex]); ?></p>
         <?php endif; ?>
-
+        <?php if ($orderX !== null): ?>
           <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Order by (X):</b> <?php echo $orderX == 0 ? 'Ascending' : 'Descending'; ?></p>
-    
+        <?php endif; ?>
+        <?php if ($orderY !== null): ?>
           <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Order by (Y):</b> <?php echo $orderY == 0 ? 'Ascending' : 'Descending'; ?></p>
-    
+        <?php endif; ?>
         <?php if (!empty($filters['p.abbrev'])): ?>
           <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Filters:</b></p>
           <div class="mx-4 italic text-xs">

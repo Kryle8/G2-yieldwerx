@@ -23,7 +23,7 @@ include('graph_backend.php');
        }
        canvas {
            height: 400px;
-           width: 450px;
+           width: 400px;
        }
        .-rotate-90 {
             --tw-rotate: -90deg;
@@ -50,6 +50,9 @@ include('graph_backend.php');
         }
         .max-w-5xl {
             max-width: 64rem /* 1024px */;
+        }
+        .w-custom {
+            width: 32rem /* 512px */;
         }
    </style>
 </head>
@@ -132,7 +135,7 @@ foreach ($combinations as $combination) {
                 echo '<div class="grid gap-2 grid-cols-1">';
                 foreach ($data as $yGroup => $chartData) {
                     $chartId = "chartXY_{$combinationKey}_{$yGroup}";
-                    echo '<div class="flex flex-row justify-center items-center">';
+                    echo '<div class="flex flex-row justify-center items-center w-custom">';
                     echo '<div class="text-center">
                         <h2 class="text-center text-xl font-semibold mb-4 -rotate-90">' . $yGroup . '</h2></div>';
                         echo "<canvas id='{$chartId}'></canvas>";
