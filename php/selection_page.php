@@ -15,7 +15,7 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-t from-cyan-500 to-white">
+<body class="bg-gradient-to-b from-blue-50 to-blue-500">
 <?php include('admin_components.php'); ?>
 <nav class="flex mt-24 ml-16" aria-label="Breadcrumb">
   <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
