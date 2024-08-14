@@ -156,12 +156,13 @@ $columns = [
             </div>
 
             <div class="flex gap-4 col-span-2">
-                <div class="flex-1 h-full">
+                <div class="flex-1">
                     <!-- Group by Section -->
-                    <div class="border-2 border-gray-200 rounded-lg p-4 mb-4">
-                        <h2 class="text-md italic mb-4 w-24 text-gray-500 bg-white filter-text-header text-center"><i class="fa-solid fa-layer-group"></i>&nbsp;Group by</h2>
-                        <div class="flex w-full justify-start items-center gap-2">
-                            
+                    <div class="border-2 border-gray-200 rounded-lg p-4 mb-4 h-full flex flex-col justify-center items-center">
+                        <h2 class="text-md italic mb-4 w-24 text-gray-500 bg-white filter-text-header text-center">
+                            <i class="fa-solid fa-layer-group"></i>&nbsp;Group by
+                        </h2>
+                        <div class="flex w-full justify-center items-center gap-2">
                             <!-- X Button and Dropdown -->
                             <button id="dropdownSearchButtonX" data-dropdown-toggle="dropdownSearchX" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800" type="button">
                                 X-Axis
@@ -170,20 +171,6 @@ $columns = [
                                 </svg>
                             </button>
 
-                            <!-- X Dropdown menu -->
-                            <div id="dropdownSearchX" class="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
-                                <ul class="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButtonX">
-                                    <?php foreach ($columns as $index => $column): ?>
-                                    <li>
-                                        <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                            <input id="checkbox-item-x-<?= $index ?>" name="x" type="radio" value="<?= $index ?>" class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                                            <label for="checkbox-item-x-<?= $index ?>" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"><?= $column ?></label>
-                                        </div>
-                                    </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            </div>
-
                             <!-- Y Button and Dropdown -->
                             <button id="dropdownSearchButtonY" data-dropdown-toggle="dropdownSearchY" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-yellow-400 rounded-lg hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800" type="button">
                                 Y-Axis
@@ -191,30 +178,18 @@ $columns = [
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                                 </svg>
                             </button>
-
-                            <!-- Y Dropdown menu -->
-                            <div id="dropdownSearchY" class="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
-                                <ul class="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButtonY">
-                                    <?php foreach ($columns as $index => $column): ?>
-                                    <li>
-                                        <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                            <input id="checkbox-item-y-<?= $index ?>" name="y" type="radio" value="<?= $index ?>" class="w-4 h-4 text-yellow-500 bg-gray-100 border-gray-300 rounded focus:ring-yellow-500 dark:focus:ring-yellow-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                                            <label for="checkbox-item-y-<?= $index ?>" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"><?= $column ?></label>
-                                        </div>
-                                    </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex-1 h-full">
+                <div class="flex-1">
                     <!-- Sort by Section -->
-                    <div class="border-2 border-gray-200 rounded-lg p-4 mb-4">
-                        <h2 class="text-md italic mb-4 w-20 text-gray-500 bg-white filter-text-header text-center"><i class="fa-solid fa-sort"></i>&nbsp;Sort by</h2>
-                        <div class="flex w-full justify-start items-center gap-2">
-                            <!-- Sort Button and Dropdown -->
+                    <div class="border-2 border-gray-200 rounded-lg p-4 mb-4 h-full flex flex-col justify-center items-center">
+                        <h2 class="text-md italic mb-4 w-20 text-gray-500 bg-white filter-text-header text-center">
+                            <i class="fa-solid fa-sort"></i>&nbsp;Sort by
+                        </h2>
+                        <div class="flex w-full justify-center items-center gap-2">
+                            <!-- X Button and Dropdown -->
                             <button id="dropdownSearchButtonSort" data-dropdown-toggle="dropdownSearchSort" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-orange-500 rounded-lg hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800" type="button">
                                 X-Axis
                                 <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
@@ -222,54 +197,19 @@ $columns = [
                                 </svg>
                             </button>
 
-                            <!-- Sort Dropdown menu -->
-                            <div id="dropdownSearchSort" class="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
-                                <ul class="h-18 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButtonSort">
-                                    <li>
-                                        <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                            <input id="checkbox-item-x-0" name="order-x" type="radio" value="0" class="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 dark:focus:ring-orange-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                                            <label for="checkbox-item-x-0" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Ascending</label>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                            <input id="checkbox-item-x-1" name="order-x" type="radio" value="1" class="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 dark:focus:ring-orange-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                                            <label for="checkbox-item-x-1" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Descending</label>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <!-- ASC or DESC Button and Dropdown -->
+                            <!-- Y Button and Dropdown -->
                             <button id="dropdownSearchButtonOrder" data-dropdown-toggle="dropdownSearchOrder" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-cyan-700 rounded-lg hover:bg-cyan-800 focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-800" type="button">
                                 Y-Axis
                                 <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                                 </svg>
                             </button>
-
-                            <!-- Order Dropdown menu -->
-                            <div id="dropdownSearchOrder" class="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
-                                <ul class="h-18 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButtonOrder">
-                                    <li>
-                                        <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                            <input id="checkbox-item-x-0" name="order-y" type="radio" value="0" class="w-4 h-4 text-cyan-600 bg-gray-100 border-gray-300 rounded focus:ring-cyan-500 dark:focus:ring-cyan-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                                            <label for="checkbox-item-x-0" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Ascending</label>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                            <input id="checkbox-item-x-1" name="order-y" type="radio" value="1" class="w-4 h-4 text-cyan-600 bg-gray-100 border-gray-300 rounded focus:ring-cyan-500 dark:focus:ring-cyan-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                                            <label for="checkbox-item-x-1" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Descending</label>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="flex-1 max-w-[100px]">
-                    <div class="border-2 border-gray-200 rounded-lg p-4 mb-4">
+                    <div class="border-2 border-gray-200 rounded-lg p-4 mb-4 h-full flex flex-col justify-center items-center">
                         <h2 class="text-md italic mb-4 w-auto text-gray-500 bg-gray-50 bg-transparent text-center">Type of Chart</h2>
                         <div class="flex flex-col w-full justify-start items-center gap-2">
                             <div class="flex items-center">
@@ -284,6 +224,7 @@ $columns = [
                     </div>
                 </div>
             </div>
+
         </div>
 
         <div class="text-center w-full flex justify-start gap-4">
