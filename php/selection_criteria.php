@@ -164,20 +164,30 @@ $columns = [
                         </h2>
                         <div class="flex w-full justify-center items-center gap-2">
                             <!-- X Button and Dropdown -->
-                            <button id="dropdownSearchButtonX" data-dropdown-toggle="dropdownSearchX" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-green-400 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800" type="button">
-                                X-Axis
-                                <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                                </svg>
-                            </button>
+                            <div>
+                                <select id="x-axis-select" name="x" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm font-medium rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    <option selected disabled>X-Axis</option>
+                                    <?php foreach ($columns as $index => $column): ?>
+                                        <option value="<?= $index ?>" class="bg-white text-gray-900"><?= $column ?></option>
+                                    <?php endforeach; ?>
+                                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                    </svg>
+                                </select>
+                            </div>
 
                             <!-- Y Button and Dropdown -->
-                            <button id="dropdownSearchButtonY" data-dropdown-toggle="dropdownSearchY" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-green-500 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800" type="button">
-                                Y-Axis
-                                <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                                </svg>
-                            </button>
+                            <div>
+                                <select id="y-axis-select" name="y" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm font-medium rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    <option selected disabled>Y-Axis</option>
+                                    <?php foreach ($columns as $index => $column): ?>
+                                        <option value="<?= $index ?>" class="bg-white text-gray-900"><?= $column ?></option>
+                                    <?php endforeach; ?>
+                                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                    </svg>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -190,20 +200,22 @@ $columns = [
                         </h2>
                         <div class="flex w-full justify-center items-center gap-2">
                             <!-- X Button and Dropdown -->
-                            <button id="dropdownSearchButtonSort" data-dropdown-toggle="dropdownSearchSort" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-orange-300 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800" type="button">
-                                X-Axis
-                                <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                                </svg>
-                            </button>
+                            <div>
+                                <select id="x-axis-select" name="order-x" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm font-medium rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                        <option selected disabled>X-Axis</option>
+                                        <option value="0" class="bg-white text-gray-900">Ascending</option>
+                                        <option value="1" class="bg-white text-gray-900">Descending</option>
+                                </select>
+                            </div>
 
                             <!-- Y Button and Dropdown -->
-                            <button id="dropdownSearchButtonOrder" data-dropdown-toggle="dropdownSearchOrder" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-cyan-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-800" type="button">
-                                Y-Axis
-                                <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                                </svg>
-                            </button>
+                            <div>
+                                <select id="x-axis-select" name="order-y" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm font-medium rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                        <option selected disabled>X-Axis</option>
+                                        <option value="0" class="bg-white text-gray-900">Ascending</option>
+                                        <option value="1" class="bg-white text-gray-900">Descending</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -227,15 +239,15 @@ $columns = [
 
         </div>
 
-        <div class="text-center w-full flex justify-start gap-4">
+        <div class="text-center w-full flex justify-start gap-4" style="display: flex; justify-content: flex-end;">
 
             <!-- Modal toggle
             <button data-modal-target="select-modal" data-modal-toggle="select-modal" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
             Submit&nbsp;<i class="fa-solid fa-arrow-right"></i>
             </button> -->
 
-            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg"><i class="fa-solid fa-play"></i>&nbsp;Execute</button>
-            <button type="button" id="resetButton" class="px-4 py-2 bg-red-500 text-white rounded-lg">Reset&nbsp;<i class="fa-solid fa-delete-left"></i></button>
+            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg">Submit</button>
+            <button type="button" id="resetButton" class="px-4 py-2 bg-red-500 text-white rounded-lg">Reset</button>
         </div>
 
         <!-- ?php include('chart_type_modal.php'); ? -->

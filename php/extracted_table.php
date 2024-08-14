@@ -134,22 +134,26 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
 </div>
 <div class="flex justify-center items-center h-full bg-white">
     <div class="w-full max-w-7xl p-6 rounded-lg shadow-lg bg-white` mt-6">
-        <div class="mb-4 text-right">
-            <a href="selection_page.php" class="px-4 py-2 bg-orange-500 text-white rounded mr-2">
-                <i class="fa-solid fa-list"></i>&nbsp;Selection Criteria
-            </a>
-            <?php if ($chart == 1): ?>
-                <a href="graph.php?<?php echo http_build_query($_GET); ?>" target="_blank" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
-                    <i class="fa-solid fa-chart-area"></i>&nbsp;XY Scatter Plot
+        <div class="mb-4 flex justify-between">
+            <div>
+                <a href="selection_page.php" class="px-4 py-2 bg-blue-500 text-white rounded mr-2">
+                    <i class="fa-solid fa-arrow-left"></i>&nbsp;Back
                 </a>
-            <?php else: ?>
-                <a href="line_chart.php?<?php echo http_build_query($_GET); ?>" target="_blank" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
-                    <i class="fa-solid fa-chart-line"></i>&nbsp;Line Chart
+            </div>
+            <div class="mb-4 text-right">
+                <?php if ($chart == 1): ?>
+                    <a href="graph.php?<?php echo http_build_query($_GET); ?>" target="_blank" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
+                        <i class="fa-solid fa-chart-area"></i>&nbsp;XY Scatter Plot
+                    </a>
+                <?php else: ?>
+                    <a href="line_chart.php?<?php echo http_build_query($_GET); ?>" target="_blank" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
+                        <i class="fa-solid fa-chart-line"></i>&nbsp;Line Chart
+                    </a>
+                <?php endif; ?>
+                <a href="export.php?<?php echo http_build_query($_GET); ?>" class="px-5 py-2 bg-green-500 text-white rounded">
+                    <i class="fa-regular fa-file-excel"></i>&nbsp;Export
                 </a>
-            <?php endif; ?>
-            <a href="export.php?<?php echo http_build_query($_GET); ?>" class="px-5 py-2 bg-green-500 text-white rounded">
-                <i class="fa-regular fa-file-excel"></i>&nbsp;Export
-            </a>
+            </div>
         </div>
         <h1 class="text-start text-2xl font-bold mb-4">Data Extraction [Total: <?php echo $total_rows; ?>]</h1>
         <div class="table-container">
