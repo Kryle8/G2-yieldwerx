@@ -14,9 +14,12 @@
       .ml-16 {
             margin-left: 4rem /* 64px */;
         }
+      .bgtable {
+            background-image: linear-gradient(to bottom, white, #BAE6FD);;
+      }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bgtable">
 <?php include('admin_components.php'); ?>
 <nav class="flex mt-24 ml-16" aria-label="Breadcrumb">
   <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">

@@ -132,8 +132,8 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
         <?php include('received_parameters.php'); ?>
     </div>
 </div>
-<div class="flex justify-center items-center h-full">
-    <div class="w-full max-w-7xl p-6 rounded-lg shadow-lg bg-white mt-6">
+<div class="flex justify-center items-center h-full bg-white">
+    <div class="w-full max-w-7xl p-6 rounded-lg shadow-lg bg-white` mt-6">
         <div class="mb-4 text-right">
             <a href="selection_page.php" class="px-4 py-2 bg-orange-500 text-white rounded mr-2">
                 <i class="fa-solid fa-list"></i>&nbsp;Selection Criteria
