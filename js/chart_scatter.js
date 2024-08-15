@@ -62,12 +62,37 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    function calculateCorrelation(data) {
+        const n = data.length;
+        if (n === 0) return { r: null, r2: null };
+    
+        const sumX = data.reduce((sum, point) => sum + point.x, 0);
+        const sumY = data.reduce((sum, point) => sum + point.y, 0);
+        const sumXY = data.reduce((sum, point) => sum + point.x * point.y, 0);
+        const sumX2 = data.reduce((sum, point) => sum + point.x * point.x, 0);
+        const sumY2 = data.reduce((sum, point) => sum + point.y * point.y, 0);
+    
+        const numerator = (n * sumXY) - (sumX * sumY);
+        const denominator = Math.sqrt(((n * sumX2) - (sumX * sumX)) * ((n * sumY2) - (sumY * sumY)));
+    
+        if (denominator === 0) return { r: 0, r2: 0 };
+    
+        const r = numerator / denominator;
+        const r2 = r * r;
+    
+        return { r, r2 };
+    }
+    
+
     function createScatterChart(ctx, data, label, minX, maxX, minY, maxY) {
+        const { r, r2 } = calculateCorrelation(data);
+        const correlationText = `r: ${r.toFixed(2)}, r²: ${r2.toFixed(2)}`;
+    
         return new Chart(ctx, {
             type: 'scatter',
             data: {
                 datasets: [{
-                    label: label,
+                    label: `${label} (${correlationText})`,
                     data: data,
                     backgroundColor: 'rgba(75, 192, 192, 0.6)',
                     borderColor: 'rgba(75, 192, 192, 1)',
@@ -107,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    
 
     function createCharts(groupedData, createChartFunc, marginPercentage = 0.05) {
         const { minX, maxX, minY, maxY } = getMinMaxWithMargin(groupedData, marginPercentage);
@@ -118,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const canvasElement = document.getElementById(chartId);
                         if (canvasElement) {
                             const ctx = canvasElement.getContext('2d');
-                            createChartFunc(ctx, groupedData[combination][yGroup][xGroup], `${xGroup}`, minX, maxX, minY, maxY);
+                            createChartFunc(ctx, groupedData[combination][yGroup][xGroup], `${xGroup} vs ${yGroup}`, minX, maxX, minY, maxY);
                         }
                     }
                 }
@@ -139,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const canvasElement = document.getElementById(chartId);
                     if (canvasElement) {
                         const ctx = canvasElement.getContext('2d');
-                        createChartFunc(ctx, groupedData[combination][yGroup], yGroup, minX, maxX, minY, maxY);
+                        createChartFunc(ctx, groupedData[combination][yGroup], `${yGroup}`, minX, maxX, minY, maxY);
                     }
                 }
             } else {
@@ -148,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (canvasElement) {
                     const ctx = canvasElement.getContext('2d');
                     console.log(groupedData[combination]['all']);
-                    createChartFunc(ctx, groupedData[combination]['all'], 'Line Chart', minX, maxX, minY, maxY);
+                    createChartFunc(ctx, groupedData[combination]['all'], 'Scatter Chart', minX, maxX, minY, maxY);
                 }
             }
         }
