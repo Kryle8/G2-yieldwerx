@@ -1,9 +1,6 @@
 <?php
 require __DIR__ . '/../connection.php';
 
-$groupLot = isset($_GET['group_lot']) ? true : false;
-$groupWafer = isset($_GET['group_wafer']) ? true : false;
-
 // Filters from URL parameters
 $filters = [
     "l.Facility_ID" => isset($_GET['facility']) ? $_GET['facility'] : [],
@@ -35,183 +32,236 @@ if (!empty($sql_filters)) {
 // Dynamically construct the column part of the SQL query
 $column_list = !empty($filters['tm.Column_Name']) ? implode(', ', array_map(function($col) { return "d1.$col"; }, $filters['tm.Column_Name'])) : '*';
 
-// Initialize the data array
-$data = [];
-$xLabel = $filters['tm.Column_Name'][0] ?? 'X';
-$yLabel = $filters['tm.Column_Name'][1] ?? 'Y';
-$xTestName = '';
-$yTestName = '';
-
-// Query to fetch data for the chart
-$tsql = "SELECT w.Wafer_ID, d1.{$filters['tm.Column_Name'][0]} AS X, d1.{$filters['tm.Column_Name'][1]} AS Y, tm.Test_Name
+// Retrieve all records with filters
+$tsql = "SELECT l.Facility_ID, l.Work_Center, l.Part_Type, l.Program_Name, l.Test_Temprature, l.Lot_ID,
+                w.Wafer_ID, w.Wafer_Start_Time, w.Wafer_Finish_Time, d1.Unit_Number, d1.X, d1.Y, d1.Head_Number,
+                d1.Site_Number, d1.HBin_Number, d1.SBin_Number, d1.Tests_Executed, d1.Test_Time, 
+                tm.Column_Name, tm.Test_Name, $column_list
          FROM DEVICE_1_CP1_V1_0_001 d1
          JOIN WAFER w ON w.Wafer_Sequence = d1.Wafer_Sequence
          JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
          JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
          JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
-         $where_clause";
+         $where_clause
+         ORDER BY w.Wafer_ID";
 
 $stmt = sqlsrv_query($conn, $tsql, $params);
 if ($stmt === false) {
     die(print_r(sqlsrv_errors(), true));
 }
 
-// Fetch and prepare data for Chart.js
-$groupedData = [];
-while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-    if (!$xTestName) {
-        $xTestName = $row['Test_Name'];
-    } elseif (!$yTestName) {
-        $yTestName = $row['Test_Name'];
+// Fetch 'group by' selections
+$groupByLot = isset($_GET['group_lot']) ? true : false;
+$groupByWafer = isset($_GET['group_wafer']) ? true : false;
+$groupByParam = isset($_GET['group_by_param']) ? true : false;
+$groupByParamSelect = $_GET['group_by_param_select'] ?? null;
+$groupByDirection = $_GET['group_by_direction'] ?? null;
+
+// Fetch data and prepare for Chart.js
+$dataSets = [];
+$xLabels = [];
+$yLabels = [];
+
+if ($groupByLot) {
+    $groupedData = [];
+
+    // Process rows from the SQL query
+    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+        $lotID = $row['Lot_ID'];
+        foreach ($filters['tm.Column_Name'] as $param) {
+            if (!isset($groupedData[$lotID])) {
+                $groupedData[$lotID] = [];
+            }
+            $groupedData[$lotID]['data'][] = ['x' => floatval($row['X']), 'y' => floatval($row[$param])];
+        }
     }
-    $waferID = $row['Wafer_ID'];
-    $xValue = floatval($row['X']);
-    $yValue = floatval($row['Y']);
-    
-    if ($groupWafer) {
-        $groupedData[$waferID][] = ['x' => $xValue, 'y' => $yValue];
-    } else {
-        $groupedData['all'][] = ['x' => $xValue, 'y' => $yValue];
+
+    // Prepare datasets for Chart.js
+    foreach ($groupedData as $lotID => $dataSet) {
+        $label = "Lot ID: $lotID";
+        $dataSets[] = [
+            'x' => 'X',
+            'y' => $filters['tm.Column_Name'][0], // Assuming you group by the first selected parameter
+            'data' => $dataSet['data'],
+            'label' => $label
+        ];
+        $xLabels[] = 'X';
+        $yLabels[] = $filters['tm.Column_Name'][0];
+    }
+} elseif ($groupByWafer) {
+    $groupedData = [];
+
+    // Process rows from the SQL query
+    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+        $waferID = $row['Wafer_ID'];
+        foreach ($filters['tm.Column_Name'] as $param) {
+            if (!isset($groupedData[$waferID])) {
+                $groupedData[$waferID] = [];
+            }
+            $groupedData[$waferID]['data'][] = ['x' => floatval($row['X']), 'y' => floatval($row[$param])];
+        }
+    }
+
+    // Prepare datasets for Chart.js
+    foreach ($groupedData as $waferID => $dataSet) {
+        $label = "Wafer ID: $waferID";
+        $dataSets[] = [
+            'x' => 'X',
+            'y' => $filters['tm.Column_Name'][0], // Assuming you group by the first selected parameter
+            'data' => $dataSet['data'],
+            'label' => $label
+        ];
+        $xLabels[] = 'X';
+        $yLabels[] = $filters['tm.Column_Name'][0];
+    }
+} elseif ($groupByParam && $groupByParamSelect && $groupByDirection) {
+    $groupedData = [];
+
+    // Process rows from the SQL query
+    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+        foreach ($filters['tm.Column_Name'] as $param) {
+            if ($groupByDirection == 'horizontal' && $param != $groupByParamSelect && isset($row[$param])) {
+                $groupedData[$param]['data'][] = ['x' => floatval($row[$param]), 'y' => floatval($row[$groupByParamSelect])];
+            } elseif ($groupByDirection == 'vertical' && $param != $groupByParamSelect && isset($row[$param])) {
+                $groupedData[$param]['data'][] = ['x' => floatval($row[$groupByParamSelect]), 'y' => floatval($row[$param])];
+            }
+        }
+    }
+
+    // Prepare datasets for Chart.js
+    foreach ($groupedData as $param => $dataSet) {
+        $label = ($groupByDirection == 'horizontal' ? "$param vs $groupByParamSelect" : "$groupByParamSelect vs $param") ?: 'Default Label';
+        $dataSets[] = [
+            'x' => $groupByDirection == 'horizontal' ? $param : $groupByParamSelect,
+            'y' => $groupByDirection == 'horizontal' ? $groupByParamSelect : $param,
+            'data' => $dataSet['data'],
+            'label' => $label
+        ];
+        $xLabels[] = $groupByDirection == 'horizontal' ? $param : $groupByParamSelect;
+        $yLabels[] = $groupByDirection == 'horizontal' ? $groupByParamSelect : $param;
+    }
+} else {
+    // Handle non-grouped scatter plots
+    if (count($filters['tm.Column_Name']) >= 1) {
+        // Generate all combinations of selected parameters
+        $params = $filters['tm.Column_Name'];
+        $numParams = count($params);
+        for ($i = $numParams - 1; $i >= 0; $i--) {
+            for ($j = 0; $j < $numParams; $j++) {
+                $xLabel = $params[$i];
+                $yLabel = $params[$j];
+                $xLabels[] = $xLabel;
+                $yLabels[] = $yLabel;
+                $dataSets[] = [
+                    'x' => $xLabel,
+                    'y' => $yLabel,
+                    'data' => [],
+                    'label' => "$xLabel vs $yLabel"
+                ];
+            }
+        }
+
+        // Process rows from the SQL query
+        while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+            foreach ($dataSets as $i => $dataSet) {
+                $xValue = floatval($row[$dataSet['x']]);
+                $yValue = floatval($row[$dataSet['y']]);
+                $dataSets[$i]['data'][] = ['x' => $xValue, 'y' => $yValue];
+            }
+        }
     }
 }
+
+// Free the statement after fetching the data
 sqlsrv_free_stmt($stmt);
 
-// Sort groupedData by wafer ID
-if ($groupWafer) {
-    ksort($groupedData);
-}
-
-// Calculate the number of distinct wafer IDs
-$numDistinctWafers = count($groupedData);
+// Encode the datasets for JSON output
+$datasetsJson = json_encode($dataSets);
+$xLabelsJson = json_encode($xLabels);
+$yLabelsJson = json_encode($yLabels);
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>XY Scatter Plot</title>
-   <link rel="stylesheet" href="../src/output.css">
-   <link href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css" rel="stylesheet" />
-   <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
-   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-   <style>
-       .chart-container {
-           overflow: auto;
-           max-height: 75vh;
-           max-width: 100%;
-       }
-       table {
-           width: 100%;
-           border-collapse: collapse;
-       }
-       td {
-           padding: 16px;
-       }
-       canvas{
-        height:300px;
-       }
-   </style>
+    <title>Scatter Plots</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #chartsContainer {
+            display: grid;
+            justify-content: center;
+            grid-gap: 5px; /* Reduce gap between charts */
+        }
+        .chart-container {
+            width: 100%; /* Allow width to adjust dynamically */
+            height: 100%; /* Allow height to adjust dynamically */
+        }
+    </style>
 </head>
-<body class="bg-gray-50">
-<?php include('admin_components.php'); ?>
-<div class="p-4 sm:ml-32">
-    <div class="p-4 rounded-lg dark:border-gray-700 mt-14">
-        <h1 class="text-center text-2xl font-bold mb-4 w-full">XY Scatter Plot</h1>
-        <div class="chart-container">
-            <table>
-                <tbody>
-                    <tr>
-                    <?php
-                    if ($groupWafer) {
-                        foreach ($groupedData as $waferID => $data) {
-                            echo '<td><div class="flex items-center justify-start flex-col"><h2 class="text-center text-xl font-semibold">Wafer ID: ' . $waferID . '</h2>';
-                            echo '<canvas id="chartXY_' . $waferID . '"></canvas></div></td>';
-                        }
-                    } else {
-                        echo '<td><canvas id="chartXY_all"></canvas></td>';
-                    }
-                    ?>
-                    </tr>
-                </tbody>
-            </table>
+<body>
+        
+        <div class="mb-4 flex justify-between items-center">
+            <a href="extracted_table.php" class="px-4 py-2 bg-blue-500 text-white rounded mr-4">
+                Back to Table
+            </a>
         </div>
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const groupedData = <?php echo json_encode($groupedData); ?>;
-            const xTestName = <?php echo json_encode($xTestName); ?>;
-            const yTestName = <?php echo json_encode($yTestName); ?>;
 
-            if (groupedData['all']) {
-                new Chart(document.getElementById('chartXY_all').getContext('2d'), {
-                    type: 'scatter',
-                    data: {
-                        datasets: [{
-                            label: xTestName + ' vs. ' + yTestName,
-                            data: groupedData['all'].map(d => ({ x: d.x, y: d.y })),
-                            backgroundColor: 'rgba(192, 192, 75, 0.6)'
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            x: {
-                                type: 'linear',
-                                position: 'bottom',
-                                title: {
-                                    display: true,
-                                    text: xTestName
-                                }
-                            },
-                            y: {
-                                type: 'linear',
-                                title: {
-                                    display: true,
-                                    text: yTestName
-                                }
+    <div id="chartsContainer"></div>
+
+    <script>
+        const dataSets = <?= $datasetsJson; ?>;
+        const chartsContainer = document.getElementById('chartsContainer');
+
+        // Calculate the number of columns based on the number of charts
+        const numCharts = dataSets.length;
+        const numColumns = Math.ceil(Math.sqrt(numCharts));
+        const chartSize = 100 / numColumns; // Dynamic size calculation
+
+        chartsContainer.style.gridTemplateColumns = `repeat(${numColumns}, ${chartSize}%)`;
+        chartsContainer.style.gridTemplateRows = `repeat(${numColumns}, ${chartSize}vh)`; // Use viewport height for responsive design
+
+        dataSets.forEach((dataSet, index) => {
+            const div = document.createElement('div');
+            div.className = 'chart-container';
+            div.style.width = `${chartSize}vw`;  // Set width based on available space
+            div.style.height = `${chartSize}vh`; // Set height based on available space
+            const canvas = document.createElement('canvas');
+            canvas.id = `chart-${index}`;
+            div.appendChild(canvas);
+            chartsContainer.appendChild(div);
+
+            new Chart(canvas, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: dataSet.label || `${dataSet.x} vs ${dataSet.y}`,
+                        data: dataSet.data,
+                        backgroundColor: 'rgba(100, 130, 173, 0.6)', // Using #6482AD with some opacity
+                        borderColor: 'rgba(100, 130, 173, 1)',       // Using #6482AD
+                        pointRadius: 2,
+                        showLine: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: dataSet.x
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: dataSet.y
                             }
                         }
                     }
-                });
-            } else {
-                for (const waferID in groupedData) {
-                    const data = groupedData[waferID];
-
-                    new Chart(document.getElementById('chartXY_' + waferID).getContext('2d'), {
-                        type: 'scatter',
-                        data: {
-                            datasets: [{
-                                label: xTestName + ' vs. ' + yTestName,
-                                data: data.map(d => ({ x: d.x, y: d.y })),
-                                backgroundColor: 'rgba(192, 192, 75, 0.6)'
-                            }]
-                        },
-                        options: {
-                            scales: {
-                                x: {
-                                    type: 'linear',
-                                    position: 'bottom',
-                                    title: {
-                                        display: true,
-                                        text: xTestName
-                                    }
-                                },
-                                y: {
-                                    type: 'linear',
-                                    title: {
-                                        display: true,
-                                        text: yTestName
-                                    }
-                                }
-                            }
-                        }
-                    });
                 }
-            }
+            });
         });
-        </script>
-    </div>
-</div>
+    </script>
 </body>
 </html>
