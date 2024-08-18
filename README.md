@@ -41,7 +41,7 @@
 1. Connect PHP to Microsoft SQL Server
 
    ``` bash
-   https://www.youtube.com/watch?v=XLTkcB_T8Mo
+   https://youtu.be/TN0gV3KPp10?si=G0b-q2H1FV_pEucl
    ```
    
 2. Make sure the PHP version matches the php_pdo_sqlsrv and php_sqlsrv
