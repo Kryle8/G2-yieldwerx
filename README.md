@@ -65,7 +65,7 @@
 6. Clone the repository inside C:\xampp\htdocs\
 
    ```bash
-   git clone 
+   git clone https://github.com/Kryle8/G2-yieldwerx.git
    ```
 
 7. Install the dependencies
