@@ -1,3 +1,5 @@
+# YieldWerx Data Extraction and Analytics System
+
 # Features
 - Utilizes the Repository Pattern and Services for maintainability
 - Follows clean code and Separation of Concerns principles
@@ -46,17 +48,20 @@
    
 2. Make sure the PHP version matches the php_pdo_sqlsrv and php_sqlsrv
 
- !
- !
+ ![image](https://github.com/user-attachments/assets/35ee70b9-98ed-493d-9c6f-eca4fe4f0255)
+ ![image](https://github.com/user-attachments/assets/5ab624ac-1a62-4d09-ac70-1a642036d706)
 
-3. Transfer php_pdo_sqlsrv and php_sqlsrv files to php ext folder
 
- !
- !
+3. Transfer php_pdo_sqlsrv and php_sqlsrv files to php ext folder (C:\xampp\php\ext)
+
+ ![image](https://github.com/user-attachments/assets/06e70e46-4f44-4201-ab05-e1b709f6004b)
+ ![image](https://github.com/user-attachments/assets/7deb30e0-23ff-4cc0-9eab-da47a236c3f4)
+
 
 4.  Insert the files as extension in php.ini
 
-  !
+  ![image](https://github.com/user-attachments/assets/b5c0ee49-7aaf-4491-878c-9a5420bded3a)
+
 
 5. Establish connection in VS Code
 
