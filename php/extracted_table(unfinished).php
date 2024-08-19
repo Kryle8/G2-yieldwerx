@@ -1,9 +1,9 @@
 <?php
-    require_once ('../controllers/TableController.php');
-    $tableController = new TableController();
-    $tableController->init();
-    
-    $chart = isset($_GET['chart']) ? $_GET['chart'] : null;
+require_once '../controllers/TableController.php';
+$tableController = new TableController();
+$tableController->init();
+
+$chart = isset($_GET['chart']) ? $_GET['chart'] : null;
 ?>
 <style>
     .table-container {
@@ -35,13 +35,23 @@
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <?php
-                            $tableController->writeTableHeaders();
+                            $headers = $tableController->writeTableHeaders();
+                            foreach ($headers as $header) {
+                                echo "<th class='px-6 py-3'>{$header}</th>";
+                            }
                         ?>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                        $tableController->writeTableData();
+                        $data = $tableController->writeTableData();
+                        foreach ($data as $row) {
+                            echo "<tr>";
+                            foreach ($row as $cell) {
+                                echo "<td class='px-6 py-4'>{$cell}</td>";
+                            }
+                            echo "</tr>";
+                        }
                     ?>
                 </tbody>
             </table>

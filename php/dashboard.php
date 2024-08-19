@@ -45,7 +45,7 @@
    <div class="rounded-lg dark:border-gray-700">
    <h1 class="text-center text-2xl font-bold mb-4 w-full">Extracted Table</h1>
       <div>
-      <?php include('extracted_table.php');?>
+      <?php include('../php/extracted_table.php');?>
       </div>
    </div>
 </div>

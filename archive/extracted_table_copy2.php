@@ -1,5 +1,5 @@
 <?php
-    require_once ('../controllers/TableController.php');
+    require_once '../controllers/TableController.php';
     $tableController = new TableController();
     $tableController->init();
     
