@@ -1,5 +1,6 @@
 <?php 
 require __DIR__ . '/../connection.php';
+require __DIR__ . '/../controllers/TableController.php'; // Include the TableController to fetch dynamic tables
 
 $xIndex = isset($_GET['x']) ? $_GET['x'] : null;
 $yIndex = isset($_GET['y']) ? $_GET['y'] : null;
@@ -56,6 +57,11 @@ if ($xColumn && $yColumn) {
     $orderByClause = "ORDER BY $yColumn $orderDirectionY";
 }
 
+// Initialize TableController to get dynamic table names
+$testProgram = isset($filters["l.Program_Name"][0]) ? $filters["l.Program_Name"][0] : null;
+$tableController = new TableController($testProgram);
+$tableController->init();
+$tables = $tableController->tables;
 
 $parameters = $filters['tm.Column_Name'];
 $data = [];
@@ -91,18 +97,18 @@ foreach ($combinations as $combination) {
     sqlsrv_free_stmt($testNameStmtX);
     sqlsrv_free_stmt($testNameStmtY);
 
+    // Use dynamic table names here
     $tsql = "
     SELECT 
         d1.{$xLabel} AS X, 
         d1.{$yLabel} AS Y, 
         " . ($xColumn ? "$xColumn AS xGroup" : "'No xGroup' AS xGroup") . ", 
         " . ($yColumn ? "$yColumn AS yGroup" : "'No yGroup' AS yGroup") . "
-    FROM DEVICE_1_CP1_V1_0_001 d1
+    FROM {$tables[0]} d1
     JOIN WAFER w ON w.Wafer_Sequence = d1.Wafer_Sequence
     JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
     JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
-    JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
-    JOIN ProbingSequenceOrder p ON p.probing_sequence = w.probing_sequence
+    JOIN {$tables[1]} d2 ON d1.Die_Sequence = d2.Die_Sequence
     $where_clause
     $orderByClause";
 

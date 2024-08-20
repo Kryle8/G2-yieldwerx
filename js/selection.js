@@ -5,6 +5,6 @@ document.getElementById('select-all-abbrev').addEventListener('change', function
 
 
 // Sort dropdown
-document.getElementById('select-all-sort').addEventListener('change', function(e) {
-    document.querySelectorAll('.filter-checkbox-sort').forEach(checkbox => checkbox.checked = e.target.checked);
-});
+// document.getElementById('select-all-sort').addEventListener('change', function(e) {
+//     document.querySelectorAll('.filter-checkbox-sort').forEach(checkbox => checkbox.checked = e.target.checked);
+// });

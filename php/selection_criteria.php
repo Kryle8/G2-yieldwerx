@@ -71,7 +71,7 @@ $columns = [
     <h1 class="text-center text-2xl font-bold mb-6 w-full">Selection Criteria</h1>
     <form action="dashboard.php" method="GET" id="criteriaForm">
         <div class="flex flex-row justify-between w-full gap-4">
-            <h2 class="text-md italic mb-4 w-24 text-gray-500 bg-white filter-text-header text-center"><i class="fa-solid fa-filter"></i>&nbsp;Filter by</h2>
+            <h2 class="text-md italic mb-4 w-24 text-gray-500 filter-text-header text-center"><i class="fa-solid fa-filter"></i>&nbsp;Filter by</h2>
             <div class="flex w-full justify-start items-start gap-2">
                 <!-- Probe Count Button and Dropdown -->
                 <button id="dropdownSearchButtonProbe" data-dropdown-toggle="dropdownSearchProbe" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-indigo-500 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800" type="button">
@@ -100,8 +100,55 @@ $columns = [
                         <?php endforeach; ?>
                     </ul>
                 </div>
+                <!-- Selected filters display -->
+                <div id="selectedFilters" class="text-gray-600 dark:text-gray-300">
+                        <!-- <span class="font-medium">Selected Filters:</span> -->
+                        <div id="selectedFiltersContainer" class="mt-2 flex space-x-2 overflow-x-auto">
+                            <!-- Selected filters will be dynamically inserted here -->
+                        </div>
+                </div>
             </div>
         </div>
+
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dropdownFilter = document.getElementById('dropdownSearchProbe');
+            const selectedFiltersContainer = document.getElementById('selectedFiltersContainer');
+
+            function updateSelectedFilters() {
+                const selectedFilters = document.querySelectorAll('.filter-checkbox-abbrev:checked');
+                selectedFiltersContainer.innerHTML = ''; // Clear current list
+                selectedFilters.forEach(checkbox => {
+                    const listItem = document.createElement('div');
+                    listItem.className = 'flex items-center px-3 py-1 bg-gray-100 dark:bg-gray-600 rounded';
+                    listItem.textContent = checkbox.nextElementSibling.textContent;
+                    selectedFiltersContainer.appendChild(listItem);
+                });
+            }
+
+            // Toggle dropdown visibility
+            document.getElementById('dropdownSearchButtonProbe').addEventListener('click', function () {
+                dropdownFilter.classList.toggle('hidden');
+            });
+
+            // Update selected filters on checkbox change
+            document.querySelectorAll('.filter-checkbox-abbrev').forEach(checkbox => {
+                checkbox.addEventListener('change', updateSelectedFilters);
+            });
+
+            // Select all functionality
+            document.getElementById('select-all-abbrev').addEventListener('change', function () {
+                const isChecked = this.checked;
+                document.querySelectorAll('.filter-checkbox-abbrev').forEach(checkbox => {
+                    checkbox.checked = isChecked;
+                });
+                updateSelectedFilters();
+            });
+        });
+
+        </script>
+
 
         <div class="grid grid-cols-3 gap-4 mb-4">
             <div>
