@@ -7,7 +7,7 @@ class TableController {
     private $params = [];
     private $where_clause = '';
     private $join_clause = '';
-    private $tables = [];
+    public $tables = [];
     private $headers = [];
     private $all_columns = [];
     private $total_rows = 0;
@@ -233,7 +233,7 @@ class TableController {
         $result = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_NUMERIC);
         $this->total_rows = $result[0];
         
-        echo "<br>Total Rows: " . $this->total_rows . "<br>";
+        // echo "<br>Total Rows: " . $this->total_rows . "<br>";
     }
     
 }
