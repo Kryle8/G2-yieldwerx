@@ -2,22 +2,21 @@ document.addEventListener('DOMContentLoaded', () => {
     function getMinMaxWithMargin(dataGroups, marginPercentage = 0.05) {
         let allXValues = [];
         let allYValues = [];
-    
+
         function extractValues(data, key) {
             if (Array.isArray(data)) {
-                return data.map(d => d[key]).filter(value => value !== undefined);
+                return data.flatMap(d => d[key] !== undefined ? [d[key]] : []);
             }
             return [];
         }
-    
-        // Loop through the dataGroups to extract all X and Y values
+
         if (xColumn && !yColumn) {
             for (const parameter in dataGroups) {
                 for (const xGroup in dataGroups[parameter]) {
                     for (const yGroup in dataGroups[parameter][xGroup]) {
                         const data = dataGroups[parameter][xGroup][yGroup];
-                        allXValues.push(...extractValues(data, 'x'));
-                        allYValues.push(...extractValues(data, 'y'));
+                        allXValues = allXValues.concat(extractValues(data, 'x'));
+                        allYValues = allYValues.concat(extractValues(data, 'y'));
                     }
                 }
             }
@@ -25,8 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
             for (const parameter in dataGroups) {
                 for (const group in dataGroups[parameter]) {
                     const data = dataGroups[parameter][group];
-                    allXValues.push(...extractValues(data, 'x'));
-                    allYValues.push(...extractValues(data, 'y'));
+                    allXValues = allXValues.concat(extractValues(data, 'x'));
+                    allYValues = allYValues.concat(extractValues(data, 'y'));
                 }
             }
         } else if (xColumn && yColumn) {
@@ -34,40 +33,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (const yGroup in dataGroups[parameter]) {
                     for (const xGroup in dataGroups[parameter][yGroup]) {
                         const data = dataGroups[parameter][yGroup][xGroup];
-                        allXValues.push(...extractValues(data, 'x'));
-                        allYValues.push(...extractValues(data, 'y'));
+                        allXValues = allXValues.concat(extractValues(data, 'x'));
+                        allYValues = allYValues.concat(extractValues(data, 'y'));
                     }
                 }
             }
         } else {
-            for (const parameter in dataGroups) {
-                const data = dataGroups[parameter]['all'];
-                allXValues.push(...extractValues(data, 'x'));
-                allYValues.push(...extractValues(data, 'y'));
-            }
+            const data = dataGroups['all'];
+            allXValues = allXValues.concat(extractValues(data, 'x'));
+            allYValues = allYValues.concat(extractValues(data, 'y'));
         }
-    
-        // Compute min and max values iteratively
-        function getMinMax(arr) {
-            if (arr.length === 0) return { min: 0, max: 0 };
-            
-            let min = arr[0];
-            let max = arr[0];
-            
-            for (let i = 1; i < arr.length; i++) {
-                if (arr[i] < min) min = arr[i];
-                if (arr[i] > max) max = arr[i];
-            }
-            
-            return { min, max };
-        }
-    
-        const { min: minXValue, max: maxXValue } = getMinMax(allXValues);
-        const { min: minYValue, max: maxYValue } = getMinMax(allYValues);
-    
+
+        const minXValue = allXValues.length > 0 ? Math.min(...allXValues) : 0;
+        const maxXValue = allXValues.length > 0 ? Math.max(...allXValues) : 0;
+        const minYValue = allYValues.length > 0 ? Math.min(...allYValues) : 0;
+        const maxYValue = allYValues.length > 0 ? Math.max(...allYValues) : 0;
+
         const xMargin = (maxXValue - minXValue) * marginPercentage;
         const yMargin = (maxYValue - minYValue) * marginPercentage;
-    
+
         return {
             minX: minXValue - xMargin,
             maxX: maxXValue + xMargin,
@@ -75,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
             maxY: maxYValue + yMargin
         };
     }
-    
 
     function createLineChart(ctx, data, label, minX, maxX, minY, maxY) {
         return new Chart(ctx, {
@@ -126,8 +109,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function createCharts(groupedData, createChartFunc, marginPercentage = 0.05) {
             const { minX, maxX, minY, maxY } = getMinMaxWithMargin(groupedData, marginPercentage);
-    
+
             for (const parameter in groupedData) {
+                console.log(parameter);
                 if (hasXColumn && hasYColumn) {
                     for (const yGroup in groupedData[parameter]) {
                         for (const xGroup in groupedData[parameter][yGroup]) {
@@ -135,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const canvasElement = document.getElementById(chartId);
                             if (canvasElement) {
                                 const ctx = canvasElement.getContext('2d');
-                                createChartFunc(ctx, groupedData[parameter][yGroup][xGroup], `${xGroup} vs ${yGroup}`, minX, maxX, minY, maxY);
+                                createChartFunc(ctx, groupedData[parameter][yGroup][xGroup], `${xGroup}`, minX, maxX, minY, maxY);
                             }
                         }
                     }
@@ -156,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const canvasElement = document.getElementById(chartId);
                         if (canvasElement) {
                             const ctx = canvasElement.getContext('2d');
-                            createChartFunc(ctx, groupedData[parameter][yGroup], `${yGroup}`, minX, maxX, minY, maxY);
+                            createChartFunc(ctx, groupedData[parameter][yGroup], yGroup, minX, maxX, minY, maxY);
                         }
                     }
                 } else {
@@ -164,7 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     const canvasElement = document.getElementById(chartId);
                     if (canvasElement) {
                         const ctx = canvasElement.getContext('2d');
-                        console.log(groupedData[parameter]['all']);
                         createChartFunc(ctx, groupedData[parameter]['all'], 'Line Chart', minX, maxX, minY, maxY);
                     }
                 }

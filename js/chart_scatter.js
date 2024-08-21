@@ -62,6 +62,53 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    function createLineChart(ctx, data, label, minX, maxX, minY, maxY) {
+        return new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: label,
+                    data: data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    fill: false,
+                    pointRadius: 1,
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: xLabel
+                        },
+                        type: 'linear',
+                        position: 'bottom',
+                        min: minX,
+                        max: maxX
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: yLabel
+                        },
+                        min: minY,
+                        max: maxY
+                    }
+                },
+                plugins: {
+                    zoom: {
+                        pan: {
+                            enabled: true,
+                            mode: 'xy'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     function calculateCorrelation(data) {
         const n = data.length;
         if (n === 0) return { r: null, r2: null };
@@ -96,8 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: data,
                     backgroundColor: 'rgba(75, 192, 192, 0.6)',
                     borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1,
-                    pointRadius: 5,
+                    pointRadius: 2,
                 }]
             },
             options: {
@@ -132,49 +178,98 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    
 
-    function createCharts(groupedData, createChartFunc, marginPercentage = 0.05) {
+    function createCharts(groupedData, isSingleParameter, createChartFunc, marginPercentage = 0.05) {
         const { minX, maxX, minY, maxY } = getMinMaxWithMargin(groupedData, marginPercentage);
-        for (const combination in groupedData) {
+
+        if (isSingleParameter) {
             if (hasXColumn && hasYColumn) {
-                for (const yGroup in groupedData[combination]) {
-                    for (const xGroup in groupedData[combination][yGroup]) {
-                        const chartId = `chartXY_${combination}_${yGroup}_${xGroup}`;
+                for (const yGroup in groupedData) {
+                    const yGroupLabel = yGroup === 'No yGroup' ? 'Ungrouped' : yGroup;
+                    for (const xGroup in groupedData[yGroup]) {
+                        const xGroupLabel = xGroup === 'No xGroup' ? 'Ungrouped' : xGroup;
+                        const chartId = `chartXY_${yGroupLabel}_${xGroupLabel}`;
                         const canvasElement = document.getElementById(chartId);
                         if (canvasElement) {
                             const ctx = canvasElement.getContext('2d');
-                            createChartFunc(ctx, groupedData[combination][yGroup][xGroup], `${xGroup} vs ${yGroup}`, minX, maxX, minY, maxY);
+                            createChartFunc(ctx, groupedData[yGroup][xGroup], `${xGroupLabel} vs ${yGroupLabel}`, minX, maxX, minY, maxY);
                         }
                     }
                 }
-            } else if (hasXColumn) {
-                for (const xGroup in groupedData[combination]) {
-                    for (const yGroup in groupedData[combination][xGroup]) {
-                        const chartId = `chartXY_${combination}_${xGroup}`;
+            } else if (hasXColumn && !hasYColumn) {
+                for (const xGroup in groupedData) {
+                    console.log("Xgroup: " + xGroup);
+                    const xGroupLabel = xGroup === 'No xGroup' ? 'Ungrouped' : xGroup;
+                    for (const yGroup in groupedData[xGroup]) {
+                        const yGroupLabel = xGroup === 'No xGroup' ? 'Ungrouped' : yGroup;
+                        const chartId = `chartXY_${xGroupLabel}`;
                         const canvasElement = document.getElementById(chartId);
                         if (canvasElement) {
                             const ctx = canvasElement.getContext('2d');
-                            createChartFunc(ctx, groupedData[combination][xGroup][yGroup], `${xGroup}`, minX, maxX, minY, maxY);
+                            createChartFunc(ctx, groupedData[xGroup][yGroup], `${xGroupLabel}`, minX, maxX, minY, maxY);
                         }
                     }
                 }
-            } else if (hasYColumn) {
-                for (const yGroup in groupedData[combination]) {
-                    const chartId = `chartXY_${combination}_${yGroup}`;
+            } else if (!hasXColumn && hasYColumn) {
+                for (const yGroup in groupedData) {
+                    const yGroupLabel = yGroup === 'No yGroup' ? 'Ungrouped' : yGroup;
+                    const chartId = `chartXY_${yGroupLabel}`;
                     const canvasElement = document.getElementById(chartId);
                     if (canvasElement) {
                         const ctx = canvasElement.getContext('2d');
-                        createChartFunc(ctx, groupedData[combination][yGroup], `${yGroup}`, minX, maxX, minY, maxY);
+                        createChartFunc(ctx, groupedData[yGroup], `${yGroupLabel}`, minX, maxX, minY, maxY);
                     }
                 }
             } else {
-                const chartId = `chartXY_${combination}_all`;
+                const chartId = 'chartXY_all';
                 const canvasElement = document.getElementById(chartId);
                 if (canvasElement) {
                     const ctx = canvasElement.getContext('2d');
-                    console.log(groupedData[combination]['all']);
-                    createChartFunc(ctx, groupedData[combination]['all'], 'Scatter Chart', minX, maxX, minY, maxY);
+                    createChartFunc(ctx, groupedData['all'], 'Line Chart', minX, maxX, minY, maxY);
+                }
+            }
+        } else {
+            for (const combination in groupedData) {
+                if (hasXColumn && hasYColumn) {
+                    for (const yGroup in groupedData[combination]) {
+                        for (const xGroup in groupedData[combination][yGroup]) {
+                            const chartId = `chartXY_${combination}_${yGroup}_${xGroup}`;
+                            const canvasElement = document.getElementById(chartId);
+                            if (canvasElement) {
+                                const ctx = canvasElement.getContext('2d');
+                                createChartFunc(ctx, groupedData[combination][yGroup][xGroup], `${xGroup}`, minX, maxX, minY, maxY);
+                            }
+                        }
+                    }
+                } else if (hasXColumn && !hasYColumn) {
+                    console.log(groupedData[combination]);
+                    for (const xGroup in groupedData[combination]) {
+                        for (const yGroup in groupedData[combination][xGroup]) {
+                            const chartId = `chartXY_${combination}_${xGroup}`;
+                            const canvasElement = document.getElementById(chartId);
+                            if (canvasElement) {
+                                const ctx = canvasElement.getContext('2d');
+                                createChartFunc(ctx, groupedData[combination][xGroup][yGroup], `${xGroup}`, minX, maxX, minY, maxY);
+                            }
+                        }
+                    }
+                } else if (!hasXColumn && hasYColumn) {
+                    console.log(groupedData[combination]);
+                    for (const yGroup in groupedData[combination]) {
+                        const chartId = `chartXY_${combination}_${yGroup}`;
+                        const canvasElement = document.getElementById(chartId);
+                        if (canvasElement) {
+                            const ctx = canvasElement.getContext('2d');
+                            createChartFunc(ctx, groupedData[combination][yGroup], yGroup, minX, maxX, minY, maxY);
+                        }
+                    }
+                } else {
+                    const chartId = `chartXY_${combination}_all`;
+                    const canvasElement = document.getElementById(chartId);
+                    if (canvasElement) {
+                        const ctx = canvasElement.getContext('2d');
+                        createChartFunc(ctx, groupedData[combination]['all'], 'Line Chart', minX, maxX, minY, maxY);
+                    }
                 }
             }
         }
@@ -193,9 +288,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Recreate charts with the new margin percentage
-        createCharts(groupedData, createScatterChart, marginPercentage);
+        createCharts(groupedData, isSingleParameter, isSingleParameter ? createLineChart : createScatterChart, marginPercentage);
     });
 
     // Initial chart creation with the default margin
-    createCharts(groupedData, createScatterChart);
+    createCharts(groupedData, isSingleParameter, isSingleParameter ? createLineChart : createScatterChart);
 });

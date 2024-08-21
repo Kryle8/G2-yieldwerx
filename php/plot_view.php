@@ -60,7 +60,13 @@
         <div class="p-4 rounded-lg dark:border-gray-700 mt-14">
             <div>
             <?php
-                include ('../php/graph_backend.php');    
+            if (isset($_GET["type"]) && $_GET['type'] === "line") {
+                include('../php/line_chart.php');
+            }
+            else {
+                include('../php/graph.php');
+            }
+            
             ?>
             </div>
         </div>
