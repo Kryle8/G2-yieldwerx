@@ -89,7 +89,11 @@
                 $stmt = sqlsrv_query($this->conn, $query);
                 while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
                     if ($type == 'parameter') {
-                        $options[] = ['value' => $row['Column_Name'], 'display' => $row['Test_Name']];
+                        // $options[] = ['value' => $row['Column_Name'], 'display' => $row['Test_Name']];
+                        $options[] = [
+                            'value' => $row['Column_Name'],
+                            'display' =>  $row['Column_Name'] . ' : ' . $row['Test_Name']
+                        ];
                     } else {
                         $options[] = array_values($row)[0];
                     }
