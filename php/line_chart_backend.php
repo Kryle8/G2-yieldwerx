@@ -1,9 +1,11 @@
 <?php 
+// Include the required files
 require __DIR__ . '/../connection.php';
+require __DIR__ . '/../controllers/TableController.php'; // Update this path to where TableController.php is located
 
+// Extract parameters from the request
 $xIndex = isset($_GET['x']) ? $_GET['x'] : null;
 $yIndex = isset($_GET['y']) ? $_GET['y'] : null;
-
 $orderX = isset($_GET['order-x']) ? $_GET['order-x'] : null;
 $orderY = isset($_GET['order-y']) ? $_GET['order-y'] : null;
 
@@ -76,6 +78,27 @@ foreach ($parameters as $parameter) {
     $testNameX = $xLabel;
     sqlsrv_free_stmt($testNameStmtY);
 
+    // Dynamically retrieve tables based on the program name
+    $tableController = new TableController($filters["l.Program_Name"]); // Instantiate the TableController
+    $tableController->init(); // Initialize to get tables
+    $tables = $tableController->tables; // Retrieve the tables
+
+    if (count($tables) < 2) {
+        die('Not enough tables retrieved to form a valid query.');
+    }
+
+    $tableAliases = ['d1', 'd2'];
+    $joins = "JOIN WAFER w ON w.Wafer_Sequence = d1.Wafer_Sequence
+              JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
+              JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
+              JOIN ProbingSequenceOrder p ON p.probing_sequence = w.probing_sequence";
+
+    for ($i = 0; $i < count($tables); $i++) {
+        if ($i > 0) {
+            $joins .= " JOIN {$tables[$i]} {$tableAliases[$i]} ON {$tableAliases[$i-1]}.Die_Sequence = {$tableAliases[$i]}.Die_Sequence";
+        }
+    }
+
     $tsql = "
     SELECT 
         w.Wafer_ID, 
@@ -83,12 +106,8 @@ foreach ($parameters as $parameter) {
         " . ($xColumn ? "$xColumn AS xGroup" : "'No xGroup' AS xGroup") . ", 
         " . ($yColumn ? "$yColumn AS yGroup" : "'No yGroup' AS yGroup") . ",
         ROW_NUMBER() OVER(PARTITION BY " . ($xColumn ?: "'No xGroup'") . " ORDER BY d1.Die_Sequence) AS row_num
-    FROM DEVICE_1_CP1_V1_0_001 d1
-    JOIN WAFER w ON w.Wafer_Sequence = d1.Wafer_Sequence
-    JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
-    JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
-    JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
-    JOIN ProbingSequenceOrder p ON p.probing_sequence = w.probing_sequence
+    FROM {$tables[0]} d1
+    $joins
     $where_clause
     $orderByClause";
 
@@ -132,5 +151,3 @@ foreach ($parameters as $parameter) {
 }
 
 $numDistinctGroups = count($groupedData);
-
-?>
