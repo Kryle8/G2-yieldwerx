@@ -60,6 +60,55 @@
             }
         });
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Handle form submission to determine selected parameters and show confirmation
+        document.getElementById('criteriaForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            // Get selected parameters
+            const selectedX = document.querySelectorAll('#parameter_x option:checked').length > 0;
+            const selectedY = document.querySelectorAll('#parameter_y option:checked').length > 0;
+
+            let chartSelection;
+            let confirmationMessage;
+
+            if (selectedX && selectedY) {
+                chartSelection = 1;
+                confirmationMessage = "You selected both parameters X and Y. \nThis would mean that a XY Scatter Plot will be generated. \nDo you want to proceed with this selection?";
+            } else if (selectedX) {
+                chartSelection = 2;
+                confirmationMessage = "You selected parameter X. \nThis would mean that a Cumulative Probability will be generated. \nDo you want to proceed with this selection?";
+            } else if (selectedY) {
+                chartSelection = 0;
+                confirmationMessage = "You selected parameter Y. \nThis would mean that a Line Chart will be generated. \nDo you want to proceed with this selection?";
+            } else {
+                alert("Please select at least one parameter.");
+                return; // Do not submit the form if no parameter is selected
+            }
+
+            // Show confirmation dialog
+            if (confirm(confirmationMessage)) {
+                // User chose to proceed
+
+                // Dynamically create the input element for chart selection
+                const chartInput = document.createElement('input');
+                chartInput.type = 'hidden';
+                chartInput.name = 'chart';
+                chartInput.value = chartSelection;
+
+                // Append the hidden input to the form
+                this.appendChild(chartInput);
+
+                // Submit the form
+                this.submit();
+            } else {
+                // User chose to go back and edit their selections
+                alert("You can edit your selections and try again.");
+            }
+        });
+    });
+
 </script>
 
 <style>
@@ -196,14 +245,24 @@
                 </select>
             </div>
 
-            <div class="col-span-1">
-                <label for="parameter" class="block text-sm font-medium text-gray-700">Parameter</label>
-                <select id="parameter" name="parameter[]" size="5" class="bg-white mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
-                    <!-- Options will be populated based on wafer selection -->
-                </select>
+            <div class="flex gap-4 col-span-3">
+                <div class="flex-1">
+                    <label for="parameter_x" class="block text-sm font-medium text-gray-700">Parameter X</label>
+                    <select id="parameter_x" name="parameter_x[]" size="5" class="bg-white mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                        <!-- Options will be populated based on wafer selection -->
+                    </select>
+                </div>
+                
+                <div class="flex-1">
+                    <label for="parameter_y" class="block text-sm font-medium text-gray-700">Parameter Y</label>
+                    <select id="parameter_y" name="parameter_y[]" size="5" class="bg-white mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                        <!-- Options will be populated based on wafer selection -->
+                    </select>
+                </div>
             </div>
 
-            <div class="flex gap-4 col-span-2">
+
+            <div class="flex gap-4 col-span-3">
                 <div class="flex-1">
                     <div class="border-2 border-gray-200 rounded-lg p-4">
                         <h2 class="text-md italic mb-4 w-auto text-gray-500 bg-gray-50 bg-transparent text-center"><i class="fa-solid fa-layer-group"></i>&nbsp;Group by (X)</h2>
@@ -369,7 +428,7 @@
                 </div>
 
 
-                <div class="flex-1 max-w-[100px]">
+                <!-- <div class="flex-1 max-w-[100px]">
                     <div class="border-2 border-gray-200 rounded-lg p-4 mb-4 w-1/4">
                         <h2 class="text-md italic mb-4 w-auto text-gray-500 bg-gray-50 bg-transparent text-center">Type of Chart</h2>
                         <div class="flex flex-col w-full justify-start items-center gap-2">
@@ -383,7 +442,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
 
         </div>
@@ -426,7 +485,12 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 let options = '';
-                if (queryType === 'parameter') {
+                if (queryType === 'parameter_x') {
+                    $.each(response, function(index, item) {
+                        options += `<option value="${item.value}">${item.display}</option>`;
+                    });
+                }
+                else if (queryType === 'parameter_y') {
                     $.each(response, function(index, item) {
                         options += `<option value="${item.value}">${item.display}</option>`;
                     });
@@ -493,13 +557,14 @@ $(document).ready(function() {
         const selectedWafer = $(this).val();
         selectedValues.Wafer_ID = selectedWafer;
         console.log(selectedValues);
-        fetchOptions(selectedValues, $('#parameter'), 'parameter');
+        fetchOptions(selectedValues, $('#parameter_x'), 'parameter_x');
+        fetchOptions(selectedValues, $('#parameter_y'), 'parameter_y');
     });
 
     // Reset button functionality
     $('#resetButton').click(function() {
         $('#criteriaForm')[0].reset();
-        $('#work_center, #device_name, #test_program, #lot, #wafer, #parameter').html('');
+        $('#work_center, #device_name, #test_program, #lot, #wafer, #parameter_x, #parameter_y').html('');
     });
     
 });

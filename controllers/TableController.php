@@ -22,6 +22,10 @@
 
         public function init() 
         {
+            // Ensure parameter_x and parameter_y are always arrays
+            $parameterX = isset($_GET['parameter_x']) && is_array($_GET['parameter_x']) ? $_GET['parameter_x'] : [];
+            $parameterY = isset($_GET['parameter_y']) && is_array($_GET['parameter_y']) ? $_GET['parameter_y'] : [];
+
             // Filters from selection_criteria.php
             $this->filters = [
                 "l.Facility_ID" => isset($_GET['facility']) ? $_GET['facility'] : [],
@@ -30,7 +34,7 @@
                 "l.program_name" => isset($_GET['test_program']) ? $_GET['test_program'] : [],
                 "l.lot_ID" => isset($_GET['lot']) ? $_GET['lot'] : [],
                 "w.wafer_ID" => isset($_GET['wafer']) ? $_GET['wafer'] : [],
-                "tm.Column_Name" => isset($_GET['parameter']) ? $_GET['parameter'] : []
+                "tm.Column_Name" => array_merge($parameterX, $parameterY)
             ];
 
             // Prepare SQL filters

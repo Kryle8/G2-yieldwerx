@@ -100,20 +100,25 @@
         </div>
         <h1 class="text-start text-2xl font-bold mb-4">Data Extraction [Total: <?php echo $tableController->getCount(); ?>]</h1>
         <div class="table-container">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <?php
-                            $tableController->writeTableHeaders();
-                        ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                        $tableController->writeTableData();
-                    ?>
-                </tbody>
-            </table>
+            
+            <table id="data-table" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead>
+                <?php
+                    // Include and initialize the TableController
+                    require_once('../controllers/TableController.php');
+                    $tableController = new TableController();
+                    $tableController->init();  // Initialize with filters, joins, and clauses
+                    
+                    // Call the method to write the table headers
+                    $tableController->writeTableHeaders();
+                ?>
+            </thead>
+            <tbody>
+                <?php
+                    $tableController->writeTableData();  // Write data rows to table
+                ?>
+            </tbody>
+        </table>
         </div>
     </div>
 </div>

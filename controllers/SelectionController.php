@@ -72,13 +72,21 @@
                     GROUP BY wafer.Wafer_ID
                     ORDER BY wafer.wafer_ID ";
                     break;
-                case 'parameter':
+                case 'parameter_x':
                     $query = "SELECT DISTINCT tm.Column_Name, tm.Test_Name, Test_Number
                               FROM TEST_PARAM_MAP tm 
                                 JOIN lot ON lot.Lot_Sequence = tm.Lot_Sequence
                               JOIN wafer ON wafer.Lot_Sequence = tm.Lot_Sequence 
                               $where_clause
                               ORDER BY Test_Number ASC";
+                    break;
+                case 'parameter_y':
+                    $query = "SELECT DISTINCT tm.Column_Name, tm.Test_Name, Test_Number
+                            FROM TEST_PARAM_MAP tm 
+                                JOIN lot ON lot.Lot_Sequence = tm.Lot_Sequence
+                            JOIN wafer ON wafer.Lot_Sequence = tm.Lot_Sequence 
+                            $where_clause
+                            ORDER BY Test_Number ASC";
                     break;
                 default:
                     $query = "";
@@ -88,7 +96,14 @@
             if ($query) {
                 $stmt = sqlsrv_query($this->conn, $query);
                 while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-                    if ($type == 'parameter') {
+                    if ($type == 'parameter_x') {
+                        // $options[] = ['value' => $row['Column_Name'], 'display' => $row['Test_Name']];
+                        $options[] = [
+                            'value' => $row['Column_Name'],
+                            'display' =>  $row['Column_Name'] . ' : ' . $row['Test_Name']
+                        ];
+                    }
+                    else if ($type == 'parameter_y') {
                         // $options[] = ['value' => $row['Column_Name'], 'display' => $row['Test_Name']];
                         $options[] = [
                             'value' => $row['Column_Name'],
