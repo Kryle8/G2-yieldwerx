@@ -93,7 +93,7 @@
                         <i class="fa-solid fa-chart-line"></i>&nbsp;Line Chart
                     </a>
                 <?php elseif ($chart == 2): ?>
-                    <a href="cumulative_probability_chart.php?<?php echo http_build_query($_GET); ?>" target="_blank" class="chart">
+                    <a href="cumulative.php?<?php echo http_build_query($_GET); ?>" target="_blank" class="chart">
                     <i class="fa-solid fa-chart-area"></i>&nbsp;Cumulative Chart
                     </a>
                 <?php endif; ?>
