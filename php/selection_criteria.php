@@ -443,6 +443,19 @@
                         </div>
                     </div>
                 </div> -->
+                <div class="flex-1 max-w-[100px]">
+                    <div class="border-2 border-gray-200 rounded-lg p-4 mb-4 w-1/4">
+                        <h2 class="text-md italic mb-4 w-auto text-gray-500 bg-gray-50 bg-transparent text-center">Type of Chart</h2>
+                        <p class="text-sm text-gray-700">
+                            The selection of the type of chart differ in what type of parameter you select:
+                            <ul class="list-disc list-inside text-sm">
+                                <li><strong>Both X and Y:</strong> An XY Scatter Plot will be generated.</li>
+                                <li><strong>Only X:</strong> A Cumulative Probability chart will be generated.</li>
+                                <li><strong>Only Y:</strong> A Line Chart will be generated.</li>
+                            </ul>
+                        </p>
+                    </div>
+                </div>
             </div>
 
         </div>
