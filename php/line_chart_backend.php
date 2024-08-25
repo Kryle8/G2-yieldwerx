@@ -248,7 +248,7 @@ $numDistinctGroups = count($groupedData);
         </div>
     </div>
 </div>
-<h1 class="text-center text-2xl font-bold w-full mb-6">XY Line Chart</h1>
+<h1 class="text-center text-2xl font-bold w-full mb-6">Line Chart</h1>
 <!-- Iterate and generate chart canvases -->
 <?php
 foreach ($groupedData as $parameter => $data) {
