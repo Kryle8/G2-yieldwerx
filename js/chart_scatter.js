@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function createLineChart(ctx, data, label, minX, maxX, minY, maxY) {
+        console.log(data);
         return new Chart(ctx, {
             type: 'line',
             data: {
@@ -183,49 +184,51 @@ document.addEventListener('DOMContentLoaded', () => {
         const { minX, maxX, minY, maxY } = getMinMaxWithMargin(groupedData, marginPercentage);
 
         if (isSingleParameter) {
-            if (hasXColumn && hasYColumn) {
-                for (const yGroup in groupedData) {
-                    const yGroupLabel = yGroup === 'No yGroup' ? 'Ungrouped' : yGroup;
-                    for (const xGroup in groupedData[yGroup]) {
+            for (const parameter in groupedData) {
+                if (hasXColumn && hasYColumn) {
+                    for (const yGroup in groupedData[parameter]) {
+                        const yGroupLabel = yGroup === 'No yGroup' ? 'Ungrouped' : yGroup;
+                        for (const xGroup in groupedData[parameter][yGroup]) {
+                            const xGroupLabel = xGroup === 'No xGroup' ? 'Ungrouped' : xGroup;
+                            const chartId = `chartXY_${yGroupLabel}_${xGroupLabel}`;
+                            const canvasElement = document.getElementById(chartId);
+                            if (canvasElement) {
+                                const ctx = canvasElement.getContext('2d');
+                                createChartFunc(ctx, groupedData[parameter][yGroup][xGroup], `${xGroupLabel} vs ${yGroupLabel}`, minX, maxX, minY, maxY);
+                            }
+                        }
+                    }
+                } else if (hasXColumn && !hasYColumn) {
+                    for (const xGroup in groupedData[parameter]) {
+                        console.log("Xgroup: " + xGroup);
                         const xGroupLabel = xGroup === 'No xGroup' ? 'Ungrouped' : xGroup;
-                        const chartId = `chartXY_${yGroupLabel}_${xGroupLabel}`;
+                        for (const yGroup in groupedData[parameter][xGroup]) {
+                            const yGroupLabel = xGroup === 'No xGroup' ? 'Ungrouped' : yGroup;
+                            const chartId = `chartXY_${xGroupLabel}`;
+                            const canvasElement = document.getElementById(chartId);
+                            if (canvasElement) {
+                                const ctx = canvasElement.getContext('2d');
+                                createChartFunc(ctx, groupedData[parameter][xGroup][yGroup], `${xGroupLabel}`, minX, maxX, minY, maxY);
+                            }
+                        }
+                    }
+                } else if (!hasXColumn && hasYColumn) {
+                    for (const yGroup in groupedData[parameter]) {
+                        const yGroupLabel = yGroup === 'No yGroup' ? 'Ungrouped' : yGroup;
+                        const chartId = `chartXY_${yGroupLabel}`;
                         const canvasElement = document.getElementById(chartId);
                         if (canvasElement) {
                             const ctx = canvasElement.getContext('2d');
-                            createChartFunc(ctx, groupedData[yGroup][xGroup], `${xGroupLabel} vs ${yGroupLabel}`, minX, maxX, minY, maxY);
+                            createChartFunc(ctx, groupedData[parameter][yGroup], `${yGroupLabel}`, minX, maxX, minY, maxY);
                         }
                     }
-                }
-            } else if (hasXColumn && !hasYColumn) {
-                for (const xGroup in groupedData) {
-                    console.log("Xgroup: " + xGroup);
-                    const xGroupLabel = xGroup === 'No xGroup' ? 'Ungrouped' : xGroup;
-                    for (const yGroup in groupedData[xGroup]) {
-                        const yGroupLabel = xGroup === 'No xGroup' ? 'Ungrouped' : yGroup;
-                        const chartId = `chartXY_${xGroupLabel}`;
-                        const canvasElement = document.getElementById(chartId);
-                        if (canvasElement) {
-                            const ctx = canvasElement.getContext('2d');
-                            createChartFunc(ctx, groupedData[xGroup][yGroup], `${xGroupLabel}`, minX, maxX, minY, maxY);
-                        }
-                    }
-                }
-            } else if (!hasXColumn && hasYColumn) {
-                for (const yGroup in groupedData) {
-                    const yGroupLabel = yGroup === 'No yGroup' ? 'Ungrouped' : yGroup;
-                    const chartId = `chartXY_${yGroupLabel}`;
+                } else {
+                    const chartId = 'chartXY_all';
                     const canvasElement = document.getElementById(chartId);
                     if (canvasElement) {
                         const ctx = canvasElement.getContext('2d');
-                        createChartFunc(ctx, groupedData[yGroup], `${yGroupLabel}`, minX, maxX, minY, maxY);
+                        createChartFunc(ctx, groupedData[parameter]['all'], 'Line Chart', minX, maxX, minY, maxY);
                     }
-                }
-            } else {
-                const chartId = 'chartXY_all';
-                const canvasElement = document.getElementById(chartId);
-                if (canvasElement) {
-                    const ctx = canvasElement.getContext('2d');
-                    createChartFunc(ctx, groupedData['all'], 'Line Chart', minX, maxX, minY, maxY);
                 }
             }
         } else {

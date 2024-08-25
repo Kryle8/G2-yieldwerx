@@ -39,9 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         } else {
-            const data = dataGroups['all'];
-            allXValues = allXValues.concat(extractValues(data, 'x'));
-            allYValues = allYValues.concat(extractValues(data, 'y'));
+            for (const parameter in dataGroups) {
+                const data = dataGroups[parameter]['all'];
+                allXValues = allXValues.concat(extractValues(data, 'x'));
+                allYValues = allYValues.concat(extractValues(data, 'y'));
+            }
         }
 
         const minXValue = allXValues.length > 0 ? Math.min(...allXValues) : 0;
@@ -111,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const { minX, maxX, minY, maxY } = getMinMaxWithMargin(groupedData, marginPercentage);
 
             for (const parameter in groupedData) {
-                console.log(parameter);
                 if (hasXColumn && hasYColumn) {
                     for (const yGroup in groupedData[parameter]) {
                         for (const xGroup in groupedData[parameter][yGroup]) {
