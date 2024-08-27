@@ -131,11 +131,12 @@ $sort_clause = '';
 $xy_clauses = [];
 if ($xColumn || $yColumn) {
     if ($xColumn) {
-        $xy_clauses[] = $xColumn . " " . $_GET["sort-x"];
+        $xy_clauses[] = $xColumn === "Probing_Sequence" ? "p.abbrev" : ($xColumn === "Program_Name" ? "l.Program_Name" : $xColumn) . " " . $_GET["sort-x"];
     }
     if ($yColumn) {
-        $xy_clauses[] = $yColumn . " " . $_GET["sort-y"];
+        $xy_clauses[] = $yColumn === "Probing_Sequence" ? "p.abbrev" : ($yColumn === "Program_Name" ? "l.Program_Name" : $yColumn) . " " . $_GET["sort-y"];
     }
+
     $sort_clause = 'ORDER BY ' . implode(', ', $xy_clauses);
 }
 
@@ -158,8 +159,8 @@ foreach ($parameters as $parameter) {
     SELECT 
         w.Wafer_ID, 
         {$dynamic_columns[$parameter]} AS Y, 
-        " . ($xColumn ? "$xColumn AS xGroup" : "'No xGroup' AS xGroup") . ", 
-        " . ($yColumn ? "$yColumn AS yGroup" : "'No yGroup' AS yGroup") . "
+        " . ($xColumn ? ($xColumn === "Probing_Sequence" ? "p.abbrev" : ($xColumn === "Program_Name" ? "l.Program_Name" : $xColumn))." AS xGroup" : "'No xGroup' AS xGroup") . ", 
+        " . ($yColumn ? ($yColumn === "Probing_Sequence" ? "p.abbrev" : ($yColumn === "Program_Name" ? "l.Program_Name" : $yColumn))." AS yGroup" : "'No yGroup' AS yGroup") . "
     FROM LOT l
     JOIN WAFER w ON w.Lot_Sequence = l.Lot_Sequence
     JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
@@ -208,11 +209,6 @@ foreach ($parameters as $parameter) {
 }
 
 ?>
-
-<!-- <div class="fixed top-24 left-4">
-    <button onclick="window.history.back()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-150 ease-in-out flex items-center">
-        <i class="fas fa-arrow-left mr-2"></i> Go Back
-</div> -->
 
 <div class="fixed top-24 right-4">
     <div class="flex w-full justify-center items-center gap-2">

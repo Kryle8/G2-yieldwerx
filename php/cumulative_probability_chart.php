@@ -131,11 +131,12 @@ $sort_clause = '';
 $xy_clauses = [];
 if ($xColumn || $yColumn) {
     if ($xColumn) {
-        $xy_clauses[] = $xColumn . " " . $_GET["sort-x"];
+        $xy_clauses[] = $xColumn === "Probing_Sequence" ? "p.abbrev" : ($xColumn === "Program_Name" ? "l.Program_Name" : $xColumn) . " " . $_GET["sort-x"];
     }
     if ($yColumn) {
-        $xy_clauses[] = $yColumn . " " . $_GET["sort-y"];
+        $xy_clauses[] = $yColumn === "Probing_Sequence" ? "p.abbrev" : ($yColumn === "Program_Name" ? "l.Program_Name" : $yColumn) . " " . $_GET["sort-y"];
     }
+
     $sort_clause = 'ORDER BY ' . implode(', ', $xy_clauses);
 }
 
@@ -143,14 +144,18 @@ $parameters = $filters['tm.Column_Name'];
 $groupedData = [];
 
 foreach ($parameters as $parameter) {
-    $total = 0;
+    $globalTotal = [
+        'all' => 0,
+        'xcol' => [],
+        'ycol' => []
+    ];
     
     $tsql = "
     SELECT 
         w.Wafer_ID, 
         {$dynamic_columns[$parameter]} AS X, 
-        " . ($xColumn ? "$xColumn AS xGroup" : "'No xGroup' AS xGroup") . ", 
-        " . ($yColumn ? "$yColumn AS yGroup" : "'No yGroup' AS yGroup") . "
+        " . ($xColumn ? ($xColumn === "Probing_Sequence" ? "p.abbrev" : ($xColumn === "Program_Name" ? "l.Program_Name" : $xColumn))." AS xGroup" : "'No xGroup' AS xGroup") . ", 
+        " . ($yColumn ? ($yColumn === "Probing_Sequence" ? "p.abbrev" : ($yColumn === "Program_Name" ? "l.Program_Name" : $yColumn))." AS yGroup" : "'No yGroup' AS yGroup") . "
     FROM LOT l
     JOIN WAFER w ON w.Lot_Sequence = l.Lot_Sequence
     JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
@@ -169,54 +174,111 @@ foreach ($parameters as $parameter) {
         $yGroup = $row['yGroup'];
         $xValue = floatval($row['X']);
         
-        $currentSum += $xValue;
-        $total += $xValue;
         if ($xColumn && $yColumn) {
-            $groupedData[$parameter][$yGroup][$xGroup][] = ['x' => $xValue, 'y' => $currentSum];
+            if (!isset($globalTotal['ycol'][$yGroup][$xGroup])) {
+                $globalTotal['ycol'][$yGroup][$xGroup] = $xValue;
+            } else {
+                $globalTotal['ycol'][$yGroup][$xGroup] += $xValue;
+            }
+            $groupedData[$parameter][$yGroup][$xGroup][] = ['x' => $xValue, 'y' => $globalTotal['ycol'][$yGroup][$xGroup]];
         } elseif ($xColumn && !$yColumn) {
-            $groupedData[$parameter][$xGroup][$yGroup][] = ['x' => $xValue, 'y' => $currentSum];
+            if (!isset($globalTotal['xcol'][$yGroup][$xGroup])) {
+                $globalTotal['xcol'][$yGroup][$xGroup] = $xValue;
+            } else {
+                $globalTotal['xcol'][$yGroup][$xGroup] += $xValue;
+            }
+            $groupedData[$parameter][$xGroup][$yGroup][] = ['x' => $xValue, 'y' => $globalTotal['xcol'][$yGroup][$xGroup]];
         } elseif (!$xColumn && $yColumn) {
-            $groupedData[$parameter][$yGroup][] = ['x' => $xValue, 'y' => $currentSum];
+            if (!isset($globalTotal['ycol'][$yGroup])) {
+                $globalTotal['ycol'][$yGroup] = $xValue;
+            } else {
+                $globalTotal['ycol'][$yGroup] += $xValue;
+            }
+            $groupedData[$parameter][$yGroup][] = ['x' => $xValue, 'y' => $globalTotal['ycol'][$yGroup]];
         } else {
-            $groupedData[$parameter]['all'][] = ['x' => $xValue, 'y' => $currentSum];
+            $globalTotal['all'] += $xValue;
+            $groupedData[$parameter]['all'][] = ['x' => $xValue, 'y' => $globalTotal['all']];
         }
+
+        
+        // if ($xColumn && $yColumn) {
+        //     $groupedData[$parameter][$yGroup][$xGroup][] = ['x' => $xValue, 'y' => $currentSum];
+        // } elseif ($xColumn && !$yColumn) {
+        //     $groupedData[$parameter][$xGroup][$yGroup][] = ['x' => $xValue, 'y' => $currentSum];
+        // } elseif (!$xColumn && $yColumn) {
+        //     $groupedData[$parameter][$yGroup][] = ['x' => $xValue, 'y' => $currentSum];
+        // } else {
+        //     $groupedData[$parameter]['all'][] = ['x' => $xValue, 'y' => $currentSum];
+        // }
     }
     sqlsrv_free_stmt($stmt);
+
 
     foreach ($groupedData as $p => &$data) {
         if ($p === $parameter) {
             if ($xColumn && $yColumn) {
-                foreach ($data[$yGroup][$xGroup] as &$dataValue) {
-                    $percentage = ($dataValue['y'] / $total) * 100;
-                    $dataValue['y'] = $percentage;
+                foreach ($data as $yGroup => &$yGroupData) {
+                    foreach ($yGroupData as $xGroup => &$dataValue) {
+                        foreach ($dataValue as &$values) {
+                            $percentage = ($values['y'] / $globalTotal['ycol'][$yGroup][$xGroup]) * 100;
+                            $values['y'] = $percentage;
+                        }
+                    }
                 }
             } elseif ($xColumn && !$yColumn) {
-                foreach ($data[$xGroup][$yGroup] as &$dataValue) {
-                    $percentage = ($dataValue['y'] / $total) * 100;
-                    $dataValue['y'] = $percentage;
+                foreach ($data as $xGroup => &$yGroupData) {
+                    foreach ($yGroupData as $yGroup => &$dataValue) {
+                        foreach ($dataValue as &$values) {
+                            $percentage = ($values['y'] / $globalTotal['xcol'][$yGroup][$xGroup]) * 100;
+                            $values['y'] = $percentage;
+                        }
+                    }
                 }
             } elseif (!$xColumn && $yColumn) {
-                foreach ($data[$yGroup] as &$dataValue) {
-                    $percentage = ($dataValue['y'] / $total) * 100;
-                    $dataValue['y'] = $percentage;
+                foreach ($data as $yGroup => &$dataValue) {
+                    foreach ($dataValue as &$values) {
+                        $percentage = ($values['y'] / $globalTotal['ycol'][$yGroup]) * 100;
+                        $values['y'] = $percentage;
+                    }
                 }
             } else {
-                foreach ($data['all'] as &$dataValue) {
-                    $percentage = ($dataValue['y'] / $total) * 100;
-                    $dataValue['y'] = $percentage;
+                foreach ($data['all'] as &$values) {
+                    $percentage = ($values['y'] / $globalTotal['all']) * 100;
+                    $values['y'] = $percentage;
                 }
             }
         }
     }
+
+    // foreach ($groupedData as $p => &$data) {
+    //     if ($p === $parameter) {
+    //         if ($xColumn && $yColumn) {
+    //             foreach ($data[$yGroup][$xGroup] as &$dataValue) {
+    //                 $percentage = ($dataValue['y'] / $total) * 100;
+    //                 $dataValue['y'] = $percentage;
+    //             }
+    //         } elseif ($xColumn && !$yColumn) {
+    //             foreach ($data[$xGroup][$yGroup] as &$dataValue) {
+    //                 $percentage = ($dataValue['y'] / $total) * 100;
+    //                 $dataValue['y'] = $percentage;
+    //             }
+    //         } elseif (!$xColumn && $yColumn) {
+    //             foreach ($data[$yGroup] as &$dataValue) {
+    //                 $percentage = ($dataValue['y'] / $total) * 100;
+    //                 $dataValue['y'] = $percentage;
+    //             }
+    //         } else {
+    //             foreach ($data['all'] as &$dataValue) {
+    //                 $percentage = ($dataValue['y'] / $total) * 100;
+    //                 $dataValue['y'] = $percentage;
+    //             }
+    //         }
+    //     }
+    // }
 }
 
 ?>
 
-
-<!-- <div class="fixed top-24 left-4">
-    <button onclick="window.history.back()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-150 ease-in-out flex items-center">
-        <i class="fas fa-arrow-left mr-2"></i> Go Back
-</div> -->
 
 <div class="fixed top-24 right-4">
     <div class="flex w-full justify-center items-center gap-2">
