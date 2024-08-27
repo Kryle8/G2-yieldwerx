@@ -62,7 +62,42 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Handle form submission to determine selected parameters and show confirmation
+        // Function to get the label of the selected chart type
+        function getSelectedLabel(selectedValue, options) {
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].value === selectedValue) {
+                    return options[i].label;
+                }
+            }
+            return null; // Return null if the value is not found
+        }
+
+        // Function to prompt the user to select a chart type
+        function promptChartTypeSelection(options) {
+            let promptMessage = "Please select the type of chart to generate:\n\n";
+            options.forEach(option => {
+                promptMessage += `${option.value}: ${option.label}\n`;
+            });
+
+            const selectedValue = prompt(promptMessage);
+
+            // Validate the user's selection
+            if (options.some(option => option.value === selectedValue)) {
+                return selectedValue;
+            } else {
+                alert("Invalid selection. Please try again.");
+                return null;
+            }
+        }
+
+        // Define available chart types
+        const chartTypeOptions = [
+            { value: '1', label: 'XY Scatter Plot', chartTypeSelection: 1 },
+            { value: '2', label: 'Line Chart', chartTypeSelection: 2 },
+            { value: '3', label: 'Cumulative Probability', chartTypeSelection: 3 }
+        ];
+
+        // Handle form submission to determine selected parameters and show chart type selection
         document.getElementById('criteriaForm').addEventListener('submit', function (e) {
             e.preventDefault(); // Prevent the default form submission
 
@@ -70,44 +105,73 @@
             const selectedX = document.querySelectorAll('#parameter_x option:checked').length > 0;
             const selectedY = document.querySelectorAll('#parameter_y option:checked').length > 0;
 
-            let chartSelection;
             let confirmationMessage;
+            let chartTypeSelection;
 
             if (selectedX && selectedY) {
-                chartSelection = 1;
-                confirmationMessage = "You selected both parameters X and Y. \nThis would mean that a XY Scatter Plot will be generated. \nDo you want to proceed with this selection?";
+                // Display the initial confirmation message
+                confirmationMessage = "You selected both parameters X and Y. \nThis means you can generate one of the following charts: XY Scatter Plot, Line Chart, or Cumulative Probability.";
+                alert(confirmationMessage);
+
+                // Prompt the user to choose a chart type
+                chartTypeSelection = promptChartTypeSelection(chartTypeOptions);
+
+                // Get the label of the selected chart type
+                const selectedLabel = getSelectedLabel(chartTypeSelection, chartTypeOptions);
+
+                if (selectedLabel) {
+                    // Directly proceed to form submission confirmation if a valid chart is selected
+                    const proceed = confirm("You selected the chart type: " + selectedLabel + ". Do you want to proceed?");
+                    if (!proceed) {
+                        alert("Chart selection was cancelled. Please select again.");
+                        return; // Stop processing if user cancels
+                    }
+                } else {
+                    alert("Invalid chart selection. Please try again.");
+                    return; // Stop processing if selection is invalid
+                }
+
+
+                // confirmationMessage = "You selected parameter X and Y. \nThis means you can generate a XY Scatter Plot. \nDo you want to proceed?";
+                // chartTypeSelection = '1'; // Set to XY Scatter Plot
+
             } else if (selectedX) {
-                chartSelection = 2;
-                confirmationMessage = "You selected parameter X. \nThis would mean that a Cumulative Probability will be generated. \nDo you want to proceed with this selection?";
+                confirmationMessage = "You selected parameter X. \nThis means you can generate a Cumulative Probability chart. \nDo you want to proceed?";
+                chartTypeSelection = '3'; // Set to Cumulative Probability
+
             } else if (selectedY) {
-                chartSelection = 0;
-                confirmationMessage = "You selected parameter Y. \nThis would mean that a Line Chart will be generated. \nDo you want to proceed with this selection?";
+                confirmationMessage = "You selected parameter Y. \nThis means you can generate a Line Chart. \nDo you want to proceed?";
+                chartTypeSelection = '2'; // Set to Line Chart
+
             } else {
                 alert("Please select at least one parameter.");
                 return; // Do not submit the form if no parameter is selected
             }
 
-            // Show confirmation dialog
-            if (confirm(confirmationMessage)) {
-                // User chose to proceed
+            // Show final confirmation dialog
+            if ((selectedX && selectedY) || confirm(confirmationMessage)) {
+                if (chartTypeSelection) {
+                    // Dynamically create the input element for chart selection
+                    const chartInput = document.createElement('input');
+                    chartInput.type = 'hidden';
+                    chartInput.name = 'chart';
+                    chartInput.value = chartTypeSelection;
 
-                // Dynamically create the input element for chart selection
-                const chartInput = document.createElement('input');
-                chartInput.type = 'hidden';
-                chartInput.name = 'chart';
-                chartInput.value = chartSelection;
+                    // Append the hidden input to the form
+                    this.appendChild(chartInput);
 
-                // Append the hidden input to the form
-                this.appendChild(chartInput);
-
-                // Submit the form
-                this.submit();
+                    // Submit the form
+                    this.submit();
+                }
             } else {
-                // User chose to go back and edit their selections
                 alert("You can edit your selections and try again.");
             }
         });
     });
+
+
+
+
 
 </script>
 
@@ -449,7 +513,7 @@
                         <p class="text-sm text-gray-700">
                             The selection of the type of chart differ in what type of parameter you select:
                             <ul class="list-disc list-inside text-sm">
-                                <li><strong>Both X and Y:</strong> An XY Scatter Plot will be generated.</li>
+                                <li><strong>Both X and Y:</strong> There will be a pop up message that will confirm your choice.</li>
                                 <li><strong>Only X:</strong> A Cumulative Probability chart will be generated.</li>
                                 <li><strong>Only Y:</strong> A Line Chart will be generated.</li>
                             </ul>

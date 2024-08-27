@@ -145,15 +145,6 @@ $groupedData = [];
 foreach ($parameters as $parameter) {
     $total = 0;
     
-    $xLabel = $parameter;
-    $yLabel = 'Percentage (%)';
-
-    $testNameQuery = "SELECT test_name FROM TEST_PARAM_MAP WHERE Column_Name = ?";
-    $testNameStmtX = sqlsrv_query($conn, $testNameQuery, [$xLabel]);
-    $testNameX = sqlsrv_fetch_array($testNameStmtX, SQLSRV_FETCH_ASSOC)['test_name'];
-    $testNameY = $yLabel;
-    sqlsrv_free_stmt($testNameStmtX);
-
     $tsql = "
     SELECT 
         w.Wafer_ID, 
@@ -225,7 +216,6 @@ foreach ($parameters as $parameter) {
 <!-- <div class="fixed top-24 left-4">
     <button onclick="window.history.back()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-150 ease-in-out flex items-center">
         <i class="fas fa-arrow-left mr-2"></i> Go Back
-    </button>
 </div> -->
 
 <div class="fixed top-24 right-4">
@@ -261,6 +251,15 @@ foreach ($parameters as $parameter) {
 <!-- Iterate and generate chart canvases -->
 <?php
 foreach ($groupedData as $parameter => $data) {
+    $xLabel = $parameter;
+    $yLabel = 'Percentage (%)';
+
+    $testNameQuery = "SELECT test_name FROM TEST_PARAM_MAP WHERE Column_Name = ?";
+    $testNameStmtX = sqlsrv_query($conn, $testNameQuery, [$xLabel]);
+    $testNameX = sqlsrv_fetch_array($testNameStmtX, SQLSRV_FETCH_ASSOC)['test_name'];
+    $testNameY = $yLabel;
+    sqlsrv_free_stmt($testNameStmtX);
+
     echo '<div class="p-4">';
     echo '<div class="dark:border-gray-700 flex flex-col items-center">';
     echo '<div class="max-w-fit p-6 border-b-2 border-2">';
@@ -269,6 +268,9 @@ foreach ($groupedData as $parameter => $data) {
     echo '</div>';
 
     if (isset($xColumn) && isset($yColumn)) {
+        echo '<div class="flex flex-row items-center justify-center w-full">
+                <div class="-rotate-90"><h2 class="text-center text-xl font-semibold">'.$yColumn.'</h2></div>
+                <div class="flex flex-col items-center justify-center w-full">';
         $yGroupKeys = array_keys($data);
         $lastYGroup = end($yGroupKeys);
         foreach ($data as $yGroup => $xGroupData) {
@@ -286,7 +288,12 @@ foreach ($groupedData as $parameter => $data) {
             }
             echo '</div></div>';
         }
+        echo '<h3 class="text-center text-lg font-semibold">'.$xColumn.'</h3>
+            </div>
+        </div>';
     } elseif (isset($xColumn)) {
+        echo '<div class="flex flex-row items-center justify-center w-full">
+                <div class="flex flex-col items-center justify-center w-full">';
         echo '<div class="flex flex-row items-center justify-center w-full">';
         echo '<div class="grid gap-2 grid-cols-' . count($data) . '">';
         foreach ($data as $xGroup => $chartData) {
@@ -296,7 +303,13 @@ foreach ($groupedData as $parameter => $data) {
             echo '<h3 class="text-center text-lg font-semibold">' . $xGroup . '</h3></div>';
         }
         echo '</div></div>';
+        echo '<h3 class="text-center text-lg font-semibold">'.$xColumn.'</h3>
+            </div>
+        </div>';
     } elseif (isset($yColumn)) {
+        echo '<div class="flex flex-row items-center justify-center w-full">
+                <div class="-rotate-90"><h2 class="text-center text-xl font-semibold">'.$yColumn.'</h2></div>
+                <div class="flex flex-col items-center justify-center w-full">';
         echo '<div class="flex flex-row items-center justify-center w-full">';
         echo '<div class="grid gap-2 grid-cols-1">';
         foreach ($data as $yGroup => $chartData) {
@@ -307,6 +320,8 @@ foreach ($groupedData as $parameter => $data) {
             echo '</div>';
         }
         echo '</div></div>';
+        echo '</div>
+            </div>';
     } else {
         $chartId = "chartXY_{$parameter}_all";
         echo '<div class="flex items-center justify-center w-full">';

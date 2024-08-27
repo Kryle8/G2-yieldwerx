@@ -213,26 +213,24 @@ if ($isSingleParameter) {
             } else {
                 $globalCounters['ycol'][$yGroup][$xGroup]++;
             }
-            $groupedData[$yGroup][$xGroup][] = ['x' => $globalCounters['ycol'][$yGroup][$xGroup], 'y' => $yValue];
+            $groupedData[$parameter][$yGroup][$xGroup][] = ['x' => $globalCounters['ycol'][$yGroup][$xGroup], 'y' => $yValue];
         } elseif ($xColumn && !$yColumn) {
             if (!isset($globalCounters['xcol'][$yGroup][$xGroup])) {
                 $globalCounters['xcol'][$yGroup][$xGroup] = count($groupedData[$yGroup][$xGroup] ?? []) + 1;
             } else {
                 $globalCounters['xcol'][$yGroup][$xGroup]++;
             }
-            $groupedData[$xGroup][$yGroup][] = ['x' => $globalCounters['xcol'][$yGroup][$xGroup], 'y' => $yValue];
+            $groupedData[$parameter][$xGroup][$yGroup][] = ['x' => $globalCounters['xcol'][$yGroup][$xGroup], 'y' => $yValue];
         } elseif (!$xColumn && $yColumn) {
-
             if (!isset($globalCounters['ycol'][$yGroup])) {
                 $globalCounters['ycol'][$yGroup] = count($groupedData[$yGroup] ?? []) + 1;
             } else {
                 $globalCounters['ycol'][$yGroup]++;
             }
-            $groupedData[$yGroup][] = ['x' => $globalCounters['ycol'][$yGroup], 'y' => $yValue];
+            $groupedData[$parameter][$yGroup][] = ['x' => $globalCounters['ycol'][$yGroup], 'y' => $yValue];
         } else {
-
             $globalCounters['all']++;
-            $groupedData['all'][] = ['x' => $globalCounters['all'], 'y' => $yValue];
+            $groupedData[$parameter]['all'][] = ['x' => $globalCounters['all'], 'y' => $yValue];
         }
     }
 
@@ -240,11 +238,13 @@ if ($isSingleParameter) {
 }
 else {
     $combinations = [];
-    foreach ($filters['tm.Column_Name'] as $i => $parameter) {
-        for ($j = $i + 1; $j < count($filters['tm.Column_Name']); $j++) {
-            $combinations[] = [$parameter, $filters['tm.Column_Name'][$j]];
+   
+        foreach ($parameterX as $x) {
+            foreach ($parameterY as $y) {
+                $combinations[] = [$x, $y];
+            }
         }
-    }
+    
 
     foreach ($combinations as $index => $combination) {
         $xLabel = $combination[0];
@@ -306,6 +306,11 @@ else {
 $numDistinctGroups = count($groupedData);
 
 ?>
+
+<!-- <div class="fixed top-24 left-4">
+    <button onclick="window.history.back()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-150 ease-in-out flex items-center">
+        <i class="fas fa-arrow-left mr-2"></i> Go Back
+</div> -->
 
 <div class="fixed top-24 right-4">
     <div class="flex w-full justify-center items-center gap-2">
@@ -436,7 +441,7 @@ foreach ($combinations as $index => $combination) {
 <?php
     }
 } else { ?>
-<h1 class="text-center text-2xl font-bold w-full mb-6">XY Line Chart</h1>
+<h1 class="text-center text-2xl font-bold w-full mb-6">Line Chart</h1>
  <div class="p-4">
     <div class="dark:border-gray-700 flex flex-col items-center">
         <div class="max-w-fit p-6 border-b-2 border-2">
@@ -447,52 +452,70 @@ foreach ($combinations as $index => $combination) {
                 ?>
             </div>
             <?php
-            if (isset($xColumn) && isset($yColumn)) {
-                // Both X and Y parameters are set
-                $yGroupKeys = array_keys($groupedData);
-                $lastYGroup = end($yGroupKeys);
-                foreach ($groupedData as $yGroup => $xGroupData) {
-                    echo '<div class="flex flex-row items-center justify-center w-full">';
-                    echo '<div><h2 class="text-center text-xl font-semibold mb-4 -rotate-90">' . $yGroup . '</h2></div>';
-                    echo '<div class="grid gap-2 grid-cols-' . count($xGroupData) . '">';
+            foreach ($groupedData as $parameter => $data) {
+                if (isset($xColumn) && isset($yColumn)) {
+                    // Both X and Y parameters are set
+                    $yGroupKeys = array_keys($data);
+                    $lastYGroup = end($yGroupKeys);
+                    echo '<div class="flex flex-row items-center justify-center w-full">
+                            <div class="-rotate-90"><h2 class="text-center text-xl font-semibold">'.$yColumn.'</h2></div>
+                            <div class="flex flex-col items-center justify-center w-full">';
+                    foreach ($data as $yGroup => $xGroupData) {
+                        echo '<div class="flex flex-row items-center justify-center w-full">';
+                        echo '<div><h2 class="text-center text-xl font-semibold mb-4 -rotate-90">' . $yGroup . '</h2></div>';
+                        echo '<div class="grid gap-2 grid-cols-' . count($xGroupData) . '">';
 
-                    foreach ($xGroupData as $xGroup => $data) {
-                        echo '<div class="flex items-center justify-center flex-col">';
-                        echo '<canvas id="chartXY_' . $yGroup . '_' . $xGroup . '"></canvas>';
-                        if ($yGroup === $lastYGroup) {
-                            echo '<h3 class="text-center text-lg font-semibold">' . $xGroup . '</h3>';
+                        foreach ($xGroupData as $xGroup => $data) {
+                            echo '<div class="flex items-center justify-center flex-col">';
+                            echo '<canvas id="chartXY_' . $yGroup . '_' . $xGroup . '"></canvas>';
+                            if ($yGroup === $lastYGroup) {
+                                echo '<h3 class="text-center text-lg font-semibold">' . $xGroup . '</h3>';
+                            }
+                            echo '</div>';
                         }
+                        echo '</div></div>';
+                    }
+                    echo '<h3 class="text-center text-lg font-semibold">'.$xColumn.'</h3>
+                        </div>
+                    </div>';
+                } elseif (isset($xColumn) && !isset($yColumn)) {
+                    // Only X parameter is set
+                    echo '<div class="flex flex-row items-center justify-center w-full">
+                            <div class="flex flex-col items-center justify-center w-full">';
+                    echo '<div class="flex flex-row items-center justify-center w-full">';
+                    echo '<div class="grid gap-2 grid-cols-' . $numDistinctGroups . '">';
+                    foreach ($groupedData as $xGroup => $data) {
+                        echo '<div class="flex items-center justify-center flex-col">';
+                        echo '<canvas id="chartXY_' . $xGroup . '"></canvas>';
+                        echo '<h3 class="text-center text-lg font-semibold">' . $xGroup . '</h3></div>';
+                    }
+                    echo '</div></div>';
+                    echo '<h3 class="text-center text-lg font-semibold">'.$xColumn.'</h3>
+                        </div>
+                    </div>';
+                } elseif (!isset($xColumn) && isset($yColumn)) {
+                    // Only Y parameter is set
+                    echo '<div class="flex flex-row items-center justify-center w-full">
+                            <div class="-rotate-90"><h2 class="text-center text-xl font-semibold">'.$yColumn.'</h2></div>
+                            <div class="flex flex-col items-center justify-center w-full">';
+                    echo '<div class="flex flex-row items-center justify-center w-full">';
+                    echo '<div class="grid gap-2 grid-cols-1">';
+                    foreach ($groupedData as $yGroup => $data) {
+                        echo '<div class="flex flex-row justify-center items-center">';
+                        echo '<div class="text-center">
+                            <h2 class="text-center text-xl font-semibold mb-4 -rotate-90">' . $yGroup . '</h2></div>';
+                        echo '<canvas id="chartXY_' . $yGroup . '"></canvas>';
                         echo '</div>';
                     }
                     echo '</div></div>';
-                }
-            } elseif (isset($xColumn) && !isset($yColumn)) {
-                // Only X parameter is set
-                echo '<div class="flex flex-row items-center justify-center w-full">';
-                echo '<div class="grid gap-2 grid-cols-' . $numDistinctGroups . '">';
-                foreach ($groupedData as $xGroup => $data) {
-                    echo '<div class="flex items-center justify-center flex-col">';
-                    echo '<canvas id="chartXY_' . $xGroup . '"></canvas>';
-                    echo '<h3 class="text-center text-lg font-semibold">' . $xGroup . '</h3></div>';
-                }
-                echo '</div></div>';
-            } elseif (!isset($xColumn) && isset($yColumn)) {
-                // Only Y parameter is set
-                echo '<div class="flex flex-row items-center justify-center w-full">';
-                echo '<div class="grid gap-2 grid-cols-1">';
-                foreach ($groupedData as $yGroup => $data) {
-                    echo '<div class="flex flex-row justify-center items-center">';
-                    echo '<div class="text-center">
-                        <h2 class="text-center text-xl font-semibold mb-4 -rotate-90">' . $yGroup . '</h2></div>';
-                    echo '<canvas id="chartXY_' . $yGroup . '"></canvas>';
+                    echo '</div>
+                        </div>';
+                } else {
+                    // Neither X nor Y parameters are set
+                    echo '<div class="flex items-center justify-center w-full">';
+                    echo '<div><canvas id="chartXY_all"></canvas></div>';
                     echo '</div>';
                 }
-                echo '</div></div>';
-            } else {
-                // Neither X nor Y parameters are set
-                echo '<div class="flex items-center justify-center w-full">';
-                echo '<div><canvas id="chartXY_all"></canvas></div>';
-                echo '</div>';
             }
             ?>
         </div>

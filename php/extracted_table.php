@@ -88,11 +88,11 @@
                     <a href="graph.php?<?php echo http_build_query($_GET); ?>" target="_blank" class="chart">
                         <i class="fa-solid fa-chart-area"></i>&nbsp;XY Scatter Plot
                     </a>
-                <?php elseif ($chart == 0): ?>
+                <?php elseif ($chart == 2): ?>
                     <a href="line_chart.php?<?php echo http_build_query($_GET); ?>" target="_blank" class="chart">
                         <i class="fa-solid fa-chart-line"></i>&nbsp;Line Chart
                     </a>
-                <?php elseif ($chart == 2): ?>
+                <?php elseif ($chart == 3): ?>
                     <a href="cumulative.php?<?php echo http_build_query($_GET); ?>" target="_blank" class="chart">
                     <i class="fa-solid fa-chart-area"></i>&nbsp;Cumulative Chart
                     </a>
