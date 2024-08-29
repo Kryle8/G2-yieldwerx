@@ -311,29 +311,29 @@ $numDistinctGroups = count($groupedData);
 <div class="fixed top-24 right-4">
     <div class="flex w-full justify-center items-center gap-2">
         <!-- Probe Count Button and Dropdown -->
-        <button id="dropdownRangeMarginButton" data-dropdown-toggle="dropdownRangeMargin" class="inline-flex items-center px-4 py-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-300" type="button">
+        <button id="dropdownSearchButtonProbe" data-dropdown-toggle="dropdownSearchProbe" class="inline-flex items-center px-4 py-3 text-sm font-medium text-center text-white bg-cyan-500 rounded-lg focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-800" type="button">
             <i class="fa-solid fa-gear"></i>
         </button>
 
         <!-- Probe Count Dropdown menu -->
-        <div id="dropdownRangeMargin" class="z-10 hidden bg-white rounded-lg shadow w-60">
-            <ul class="h-auto px-3 pb-3 overflow-y-auto text-sm text-gray-700" aria-labelledby="dropdownSearchButtonProbe">
+        <div id="dropdownSearchProbe" class="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
+            <ul class="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButtonProbe">
                 <li>
                     <div class="flex items-center justify-start p-2 rounded">
                     <span class="text-md font-semibold">Settings</span>
                     </div>
                 </li>
                 <li>
-                    <div class="flex items-center justify-center p-2 rounded hover:bg-gray-100">
+                    <div class="flex items-center justify-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
                     <div class="flex flex-col items-end w-full">
                     <label for="marginRange" class="text-md font-semibold mb-2">Adjust Range Margin (%)</label>
-                    <input type="range" id="marginRange" min="0" max="100" value="10" step="1" class="w-48 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <input type="range" id="marginRange" min="0" max="100" value="10" step="1" class="w-48 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
                     <span id="rangeValue" class="text-sm font-semibold mt-2">5%</span>
                     </div>
                     </div>
                 </li>
             </ul>
-        </div>
+                </div>
     </div>
 </div>
 <?php
