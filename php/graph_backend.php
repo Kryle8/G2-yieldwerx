@@ -333,7 +333,7 @@ $numDistinctGroups = count($groupedData);
                     </div>
                 </li>
             </ul>
-                </div>
+        </div>
     </div>
 </div>
 <?php
