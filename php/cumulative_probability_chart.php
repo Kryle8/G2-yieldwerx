@@ -34,6 +34,27 @@ foreach ($filters as $key => $values) {
     }
 }
 
+
+$groupXY = ['x' => isset($_GET["group-x"]) ? $_GET["group-x"][0] : null,
+            'y' => isset($_GET["group-y"]) ? $_GET["group-y"][0] : null];
+
+$filterXY = ['x' => isset($_GET['filter-x']) ? $_GET['filter-x'] : [],
+             'y' => isset($_GET['filter-y']) ? $_GET['filter-y'] : []];
+
+foreach ($groupXY as $key => $value) {
+    if (!empty($value) && !empty($filterXY[$key])) {
+        if ($value === "Program_Name") {
+            $value = "l.Program_Name";
+        } else if ($value === "Probing_Sequence") {
+            $value = "p.abbrev";
+        }
+        
+        $placeholders = implode(',', array_fill(0, count($filterXY[$key]), '?'));
+        $sql_filters[] = "$value IN ($placeholders)";
+        $params = array_merge($params, $filterXY[$key]);
+    }
+}
+
 // Create the WHERE clause if filters exist
 $where_clause = '';
 if (!empty($sql_filters)) {
