@@ -449,7 +449,7 @@
                         <p class="text-sm text-gray-700">
                             The selection of the type of chart differ in what type of parameter you select:
                             <ul class="list-disc list-inside text-sm">
-                                <li><strong>Both X and Y:</strong> An XY Scatter Plot will be generated.</li>
+                                <li><strong>Both X and Y:</strong> A XY Scatter Plot will be generated.</li>
                                 <li><strong>Only X:</strong> A Cumulative Probability chart will be generated.</li>
                                 <li><strong>Only Y:</strong> A Line Chart will be generated.</li>
                             </ul>
