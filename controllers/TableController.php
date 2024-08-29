@@ -146,7 +146,7 @@
             }
 
             // Generate static and dynamic columns for Unit_Number to Test Parameters
-            $columns = ['Unit_Number','X','Y','Head_Number','Site_Number','HBin_Number','SBin_Number','Tests_Executed','Test_Time','DieType_Sequence','IsHomeDie','IsAlignmentDie','IsIncludeInYield','IsIncludeInDieCount','ReticleNumber','ReticlePositionRow','ReticlePositionColumn','ReticleActiveSitesCount','ReticleSitePositionRow','ReticleSitePositionColumn','PartNumber','PartName','DieID','DieName','SINF','UserDefinedAttribute1','UserDefinedAttribute2','UserDefinedAttribute3','DieStartTime','DieEndTime'];
+            $columns = ['Unit_Number','X','Y','Head_Number','Site_Number','HBin_Number','SBin_Number','Tests_Executed','Test_Time','DieType_Sequence','IsHomeDie','IsAlignmentDie','IsIncludeInYield','IsIncludeInDieCount','ReticleNumber','ReticlePositionRow','ReticlePositionColumn','ReticleActiveSitesCount','ReticleSitePositionRow','ReticleSitePositionColumn','PartNumber','PartName','DieID','DieName','SINF','DieStartTime','DieEndTime'];
 
             $this->static_columns = [];
             $firstTablePerProgram = []; // To track the first table for each program
@@ -226,7 +226,7 @@
             sqlsrv_free_stmt($stmt); // Free the statement here after fetching the mapping
 
             // static columns
-            $columns = ['ID', 'Facility', 'Work Center', 'Device Name', 'Test Program', 'Lot ID', 'Lot Test Temprature', 'Wafer ID', 'Wafer Start Time', 'Wafer Finish Time', 'Unit Number', 'Head Number', 'Site Number', 'Hard Bin No', 'Soft Bin No', 'Tests Executed', 'Test Time (ms)', 'Die Type', 'Home Die', 'Alignment Die', 'Include In Yield', 'Include In Die Count', 'Reticle Number', 'Reticle Position Row', 'Reticle Position Column', 'Reticle Active Sites Count', 'Reticle Site Position Row', 'Reticle Site Position Column', 'Part Number', 'Part Name', 'Die ID', 'Die Name', 'SINF', 'User Defined Attribute 1', 'User Defined Attribute 2', 'User Defined Attribute 3', 'Die Start Time', 'Die End Time'];
+            $columns = ['ID', 'Facility', 'Work Center', 'Device Name', 'Test Program', 'Lot ID', 'Lot Test Temprature', 'Wafer ID', 'Wafer Start Time', 'Wafer Finish Time', 'Unit Number', 'Head Number', 'Site Number', 'HBin Number', 'SBin Number', 'Tests Executed', 'Test Time','DieType Sequence','IsHomeDie','IsAlignmentDie','IsIncludeInYield','IsIncludeInDieCount','ReticleNumber','ReticlePositionRow','ReticlePositionColumn','ReticleActiveSitesCount','ReticleSitePositionRow','ReticleSitePositionColumn','PartNumber','PartName','DieID','DieName','SINF','DieStartTime','DieEndTime'];
 
             // sql static + dynamic columns
             $this->all_columns = array_merge($columns, $this->filters['tm.Column_Name']);
@@ -252,6 +252,8 @@
                     $this->join_table_clause
                     $this->where_clause
                     ORDER BY l.Lot_ID, w.Wafer_ID";
+
+                    // echo $query;
 
             $i = 1;
             $stmt = sqlsrv_query($this->conn, $query, $this->params); // Re-execute query to fetch data for display
