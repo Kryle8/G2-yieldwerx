@@ -132,72 +132,6 @@
 <div class="container mx-auto px-12 py-6 rounded-md shadow-md">
     <h1 class="text-center text-2xl font-bold mb-6 w-full">Selection Criteria</h1>
     <form action="dashboard.php" method="GET" id="criteriaForm">
-        <div class="flex flex-row justify-between w-full gap-4">
-            <h2 class="text-md italic mb-4 w-24 text-gray-500 filter-text-header text-center"><i class="fa-solid fa-filter"></i>&nbsp;Filter by</h2>
-            <!-- Dropdown menu -->
-            <div class="flex w-full justify-start items-center gap-2 mb-4">
-                <button id="dropdownXFilterButton" data-dropdown-toggle="dropdownXFilter" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800" type="button">
-                    X-Filter
-                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                    </svg>
-                </button>
-
-                <div id="dropdownXFilter" class="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
-                    
-                </div>
-
-                <button id="dropdownYFilterButton" data-dropdown-toggle="dropdownYFilter" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800" type="button">
-                    Y-Filter
-                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                    </svg>
-                </button>
-
-                <div id="dropdownYFilter" class="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
-                    
-                </div>
-            </div>
-        </div>
-
-
-        <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const dropdownFilter = document.getElementById('dropdownSearchProbe');
-            const selectedFiltersContainer = document.getElementById('selectedFiltersContainer');
-
-            function updateSelectedFilters() {
-                const selectedFilters = document.querySelectorAll('.filter-checkbox-abbrev:checked');
-                selectedFiltersContainer.innerHTML = ''; // Clear current list
-                selectedFilters.forEach(checkbox => {
-                    const listItem = document.createElement('div');
-                    listItem.className = 'flex items-center px-3 py-1 bg-gray-100 dark:bg-gray-600 rounded';
-                    listItem.textContent = checkbox.nextElementSibling.textContent;
-                    selectedFiltersContainer.appendChild(listItem);
-                });
-            }
-
-            // Toggle dropdown visibility
-            document.getElementById('dropdownSearchButtonProbe').addEventListener('click', function () {
-                dropdownFilter.classList.toggle('hidden');
-            });
-
-            // Update selected filters on checkbox change
-            document.querySelectorAll('.filter-checkbox-abbrev').forEach(checkbox => {
-                checkbox.addEventListener('change', updateSelectedFilters);
-            });
-
-            // Select all functionality
-            document.getElementById('select-all-abbrev').addEventListener('change', function () {
-                const isChecked = this.checked;
-                document.querySelectorAll('.filter-checkbox-abbrev').forEach(checkbox => {
-                    checkbox.checked = isChecked;
-                });
-                updateSelectedFilters();
-            });
-        });
-
-        </script>
 
 
         <div class="grid grid-cols-3 gap-4 mb-4">
@@ -425,6 +359,77 @@
                             });
                         </script>
                     </div>
+                </div>
+
+                <div class="flex-1">
+                    <div class="custom-box mb-4 w-2/3">
+                        <div class="border-2 border-gray-200 rounded-lg p-4">
+                            <h2 class="text-md italic mb-4 w-auto text-gray-500 bg-gray-50 bg-transparent text-center"><i class="fa-solid fa-filter"></i>&nbsp;Filter by</h2>
+                            <!-- Dropdown menu -->
+                            <div class="flex w-full justify-start items-center gap-2 mb-4">
+                                <button id="dropdownXFilterButton" data-dropdown-toggle="dropdownXFilter" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800" type="button">
+                                    X-Filter
+                                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                    </svg>
+                                </button>
+
+                                <div id="dropdownXFilter" class="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
+                                    
+                                </div>
+
+                                <button id="dropdownYFilterButton" data-dropdown-toggle="dropdownYFilter" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800" type="button">
+                                    Y-Filter
+                                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                    </svg>
+                                </button>
+
+                                <div id="dropdownYFilter" class="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const dropdownFilter = document.getElementById('dropdownSearchProbe');
+                        const selectedFiltersContainer = document.getElementById('selectedFiltersContainer');
+
+                        function updateSelectedFilters() {
+                            const selectedFilters = document.querySelectorAll('.filter-checkbox-abbrev:checked');
+                            selectedFiltersContainer.innerHTML = ''; // Clear current list
+                            selectedFilters.forEach(checkbox => {
+                                const listItem = document.createElement('div');
+                                listItem.className = 'flex items-center px-3 py-1 bg-gray-100 dark:bg-gray-600 rounded';
+                                listItem.textContent = checkbox.nextElementSibling.textContent;
+                                selectedFiltersContainer.appendChild(listItem);
+                            });
+                        }
+
+                        // Toggle dropdown visibility
+                        document.getElementById('dropdownSearchButtonProbe').addEventListener('click', function () {
+                            dropdownFilter.classList.toggle('hidden');
+                        });
+
+                        // Update selected filters on checkbox change
+                        document.querySelectorAll('.filter-checkbox-abbrev').forEach(checkbox => {
+                            checkbox.addEventListener('change', updateSelectedFilters);
+                        });
+
+                        // Select all functionality
+                        document.getElementById('select-all-abbrev').addEventListener('change', function () {
+                            const isChecked = this.checked;
+                            document.querySelectorAll('.filter-checkbox-abbrev').forEach(checkbox => {
+                                checkbox.checked = isChecked;
+                            });
+                            updateSelectedFilters();
+                        });
+                    });
+
+                    </script>
                 </div>
 
 
