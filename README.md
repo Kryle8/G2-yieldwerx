@@ -135,34 +135,36 @@ Welcome to the YieldWerx Data Extraction and Analytics System, designed to strea
 # UI Screenshots
 
 ## Selection Criteria
-![ss1](https://github.com/user-attachments/assets/0087bbf0-a46e-42e5-b553-707d68edcdf6)
-![ss3](https://github.com/user-attachments/assets/1d0df062-7247-405d-81af-dbec34ecb488)
+![image](https://github.com/user-attachments/assets/5ae1bbde-f300-4538-8c7d-a15ed7095cb0)
+![image](https://github.com/user-attachments/assets/1205c857-7f35-4cf3-ae93-7ed13e2bdee7)
 
-- **Functionality:** Allows users to define specific criteria for data extraction. The selection process involves filtering data based on parameters such as wafer IDs, probe counts, product types, or any specific test conditions. This feature ensures that the extracted data is relevant and meets the user's analysis needs.
+- **Functionality:** Allows users to define specific criteria for data extraction. The selection process involves filtering data based on the selected Group By conditions. This feature ensures that the extracted data is relevant and meets the user's analysis needs.
 
 ## Extracted Table
-![ss4](https://github.com/user-attachments/assets/14bb881f-a82a-4af3-afe4-92eec9360d35)
-![ss5](https://github.com/user-attachments/assets/c57ed2a3-46eb-47e8-8438-83cda21801d6)
-- **Functionality:** Presents the data extracted based on the selection criteria in a structured tabular format. Users can view detailed records, perform sorting, apply filters, and manage pagination. This table serves as the central location for reviewing the raw data before it is analyzed or visualized.
+![Screenshot (274)](https://github.com/user-attachments/assets/d27f6950-e970-4f40-86c9-3c80e67865a7)
+
+- **Functionality:** Presents the data extracted based on the selection criteria in a structured tabular format. Users can view detailed records, perform sorting, and apply filters. This table serves as the central location for reviewing the raw data before it is analyzed or visualized.
 
 ## Graphs
 ### Overview
 - **Functionality:** Provides visual representations of the extracted data, enabling users to easily interpret complex datasets. The system offers various types of charts and graphs to suit different analytical needs.
 
 ### XY Scatter Plot
-![ss6](https://github.com/user-attachments/assets/84f99231-e0a1-4114-bbe8-abaabe2312f0)
+![Screenshot (275)](https://github.com/user-attachments/assets/c524dce8-de64-40a1-8bf2-d9c903ded52a)
 - **Functionality:** Visualizes the relationship between two variables across the dataset. This plot is ideal for identifying correlations, trends, and outliers within the data.
 
 ### Line Chart
-![ss7](https://github.com/user-attachments/assets/fe20af5d-f1d7-41c8-b154-2fc665483f9d)
+![Screenshot (276)](https://github.com/user-attachments/assets/eb194b10-2ecf-4342-ae4a-ac94db4b9965)
 - **Functionality:** Depicts trends over time or across sequential data points. The line chart is particularly useful for tracking changes in key metrics, allowing users to observe patterns and predict future outcomes based on historical data.
 
 ### Cumulative Probability Chart
-![ss8](https://github.com/user-attachments/assets/972bf091-b025-4ed9-914c-5b1973eafada)
+![Screenshot (277)](https://github.com/user-attachments/assets/e21bdd15-c42d-4dab-8ac8-b57a2a8bfdaf)
 - **Functionality:** Displays the cumulative probability distribution of a dataset. This chart helps users understand the probability of different outcomes occurring within a range of values, providing insights into the overall data distribution and the likelihood of specific results.
 
 ## Additional UI
 
 ### Chart Settings for Adjusting Chart Margin
-![ss10](https://github.com/user-attachments/assets/60d365b9-52a8-4467-b2d4-661ea5aa5039)
+![image](https://github.com/user-attachments/assets/b16d1d6b-b3ee-4549-b507-ee7069bb6445)
+![image](https://github.com/user-attachments/assets/fdad2ef8-426b-4b25-a172-16a9d2c36da7)
+![image](https://github.com/user-attachments/assets/bfbff264-3528-45d7-a31e-5e9ed7432170)
 - **Functionality:** Offers users the ability to customize chart margins and other visual settings. By adjusting these parameters, users can refine the display of charts to better fit their analysis needs, ensuring clarity and enhancing the visual presentation of data.
